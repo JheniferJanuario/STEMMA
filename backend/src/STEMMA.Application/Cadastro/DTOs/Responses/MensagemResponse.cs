@@ -1,0 +1,1 @@
+namespace STEMMA.Application.Cadastro.DTOs.Responses; public class MensagemResponse {}

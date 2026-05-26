@@ -1,0 +1,1 @@
+namespace STEMMA.Application.Consultas.UseCases.AdicionarProntuario; public interface IAdicionarProntuarioUseCase {}

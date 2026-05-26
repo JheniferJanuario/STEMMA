@@ -1,0 +1,1 @@
+namespace STEMMA.Application.Cadastro.Mappers; public class PetMapper {}

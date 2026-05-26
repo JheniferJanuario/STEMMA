@@ -1,0 +1,1 @@
+namespace STEMMA.Application.Cadastro.DTOs.Requests; public class InativarPetRequest {}

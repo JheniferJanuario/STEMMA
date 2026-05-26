@@ -1,0 +1,1 @@
+namespace STEMMA.Application.Cadastro.Validators; public class CriarTutorValidator {}

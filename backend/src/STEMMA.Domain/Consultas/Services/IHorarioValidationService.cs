@@ -1,0 +1,1 @@
+namespace STEMMA.Domain.Consultas.Services; public interface IHorarioValidationService {}

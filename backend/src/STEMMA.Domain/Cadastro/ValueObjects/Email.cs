@@ -1,0 +1,1 @@
+namespace STEMMA.Domain.Cadastro.ValueObjects; public class Email {}

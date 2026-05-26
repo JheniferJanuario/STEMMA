@@ -1,0 +1,26 @@
+# Build
+bin/
+obj/
+
+# VS / Rider
+.vs/
+.idea/
+
+# User files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# .NET
+*.dll
+*.exe
+*.pdb
+
+# EF Core migrations cache
+Migrations/*Designer.cs
+
+# OS
+.DS_Store
+Thumbs.db

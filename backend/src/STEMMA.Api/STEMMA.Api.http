@@ -1,0 +1,6 @@
+@STEMMA.Api_HostAddress = http://localhost:5215
+
+GET {{STEMMA.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
