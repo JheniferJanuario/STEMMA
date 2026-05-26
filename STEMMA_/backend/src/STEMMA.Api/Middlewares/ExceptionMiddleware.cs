@@ -1,0 +1,1 @@
+namespace STEMMA.Api.Middlewares; public class ExceptionMiddleware {}

@@ -1,0 +1,1 @@
+namespace STEMMA.Domain.Consultas.Repositories; public interface IConsultaRepository {}

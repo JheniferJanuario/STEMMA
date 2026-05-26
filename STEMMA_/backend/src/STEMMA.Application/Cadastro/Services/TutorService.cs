@@ -1,0 +1,1 @@
+namespace STEMMA.Application.Cadastro.Services; public class TutorService : ITutorService {}

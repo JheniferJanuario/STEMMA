@@ -1,0 +1,1 @@
+namespace STEMMA.Domain.Consultas.Entities; public class Prontuario {}

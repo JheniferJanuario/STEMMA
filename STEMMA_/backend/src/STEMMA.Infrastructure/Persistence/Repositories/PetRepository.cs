@@ -1,0 +1,1 @@
+namespace STEMMA.Infrastructure.Persistence.Repositories; public class PetRepository {}

@@ -1,0 +1,1 @@
+namespace STEMMA.Infrastructure.Persistence.Configurations; public class ConsultaConfiguration {}

@@ -1,0 +1,1 @@
+namespace STEMMA.Api.Configurations; public class CorsConfiguration {}

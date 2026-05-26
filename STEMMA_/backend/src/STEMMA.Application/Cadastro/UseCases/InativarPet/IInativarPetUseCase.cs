@@ -1,0 +1,1 @@
+namespace STEMMA.Application.Cadastro.UseCases.InativarPet; public interface IInativarPetUseCase {}

@@ -1,0 +1,1 @@
+namespace STEMMA.Shared.Exceptions; public class BaseException : Exception {}

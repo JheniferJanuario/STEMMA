@@ -1,0 +1,1 @@
+namespace STEMMA.Api.Extensions; public class ServiceCollectionExtensions {}
