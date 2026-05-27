@@ -1,1 +1,0 @@
-namespace STEMMA.Domain.Cadastro.Repositories; public interface ITutorRepository {}

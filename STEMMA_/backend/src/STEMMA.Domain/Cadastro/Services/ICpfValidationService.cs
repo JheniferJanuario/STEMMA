@@ -1,1 +1,0 @@
-namespace STEMMA.Domain.Cadastro.Services; public interface ICpfValidationService {}

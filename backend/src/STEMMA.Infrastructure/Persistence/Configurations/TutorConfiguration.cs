@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using STEMMA.Domain.Cadastro.Entities;
 
 namespace STEMMA.Infrastructure.Persistence.Configurations;

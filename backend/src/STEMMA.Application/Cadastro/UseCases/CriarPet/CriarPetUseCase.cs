@@ -1,1 +1,0 @@
-namespace STEMMA.Application.Cadastro.UseCases.CriarPet; public class CriarPetUseCase : ICriarPetUseCase {}

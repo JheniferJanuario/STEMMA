@@ -1,1 +1,0 @@
-namespace STEMMA.Infrastructure.Persistence.Context; public class StemmaDbContext {}

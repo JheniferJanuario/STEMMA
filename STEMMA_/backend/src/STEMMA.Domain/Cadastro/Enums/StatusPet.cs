@@ -1,1 +1,0 @@
-namespace STEMMA.Domain.Cadastro.Enums; public enum StatusPet { Ativo, Inativo }

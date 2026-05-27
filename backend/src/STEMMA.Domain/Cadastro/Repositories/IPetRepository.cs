@@ -13,4 +13,5 @@ public interface IPetRepository
     Task<Pet?> ObterPorIdAsync(Guid id);
 
     Task<List<Pet>> ListarAsync();
+
 }

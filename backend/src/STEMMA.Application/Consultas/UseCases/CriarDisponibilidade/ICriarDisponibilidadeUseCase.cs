@@ -1,1 +1,1 @@
-namespace STEMMA.Application.Consultas.UseCases.CriarDisponibilidade; public interface ICriarDisponibilidadeUseCase {}
+namespace STEMMA.Application.Consultas.UseCases.CreateDisponibilidade; public interface ICreateDisponibilidadeUseCase {}

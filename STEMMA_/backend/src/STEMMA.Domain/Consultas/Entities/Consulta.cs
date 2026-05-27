@@ -1,1 +1,0 @@
-namespace STEMMA.Domain.Consultas.Entities; public class Consulta {}

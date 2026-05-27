@@ -21,6 +21,10 @@ builder.Services.AddScoped<ITutorRepository, TutorRepository>();
 
 builder.Services.AddScoped<IPetRepository, PetRepository>();
 
+builder.Services.AddScoped<CreateTutorUseCase>();
+
+builder.Services.AddScoped<CreatePetUseCase>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",

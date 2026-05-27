@@ -1,1 +1,0 @@
-namespace STEMMA.Domain.Consultas.Enums; public enum StatusConsulta { Agendada, Encerrada }
