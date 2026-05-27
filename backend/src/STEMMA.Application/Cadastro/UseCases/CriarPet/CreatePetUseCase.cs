@@ -1,7 +1,7 @@
 using STEMMA.Domain.Cadastro.Entities;
 using STEMMA.Domain.Cadastro.Repositories;
 
-namespace STEMMA.Application.Cadastro.UseCases.CreatePet;
+namespace STEMMA.Application.Cadastro.UseCases.CriarPet;
 
 public class CreatePetUseCase
 {
@@ -12,11 +12,21 @@ public class CreatePetUseCase
         _repository = repository;
     }
 
-    public async Task<Guid> Execute(string nome, string raca, Guid tutorId)
+    public async Task<Guid> Execute(
+        string nome,
+        string raca,
+        int idade,
+        decimal peso,
+        Guid tutorId)
     {
-        var pet = new Pet(nome, raca, tutorId);
+        var pet = new Pet(
+            nome,
+            raca,
+            idade,
+            peso,
+            tutorId);
 
-        await _repository.AddAsync(pet);
+        await _repository.AdicionarAsync(pet);
 
         return pet.Id;
     }
