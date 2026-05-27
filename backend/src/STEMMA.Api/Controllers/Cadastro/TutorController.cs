@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using STEMMA.Application.Cadastro.DTOs.Requests;
-using STEMMA.Application.Cadastro.UseCases.Tutor;
+using STEMMA.Application.Cadastro.UseCases.CriarTutor;
 
 namespace STEMMA.Api.Controllers;
 
@@ -18,7 +18,7 @@ public class TutorController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateTutorRequest request)
     {
-        var id = await _useCase.Execute(request.Nome, request.Email);
+        var id = await _useCase.Execute(request.Nome, request.CPF, request.Email);
         return Ok(id);
     }
 }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using STEMMA.Application.Cadastro.DTOs.Requests;
-using STEMMA.Application.Cadastro.UseCases.Pet;
+using STEMMA.Application.Cadastro.UseCases.CriarPet;
 
 namespace STEMMA.Api.Controllers;
 
@@ -16,9 +16,16 @@ public class PetController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CriarPetRequest request)
+    public async Task<IActionResult> Create([FromBody] CreatePetRequest request)
     {
-        var id = await _useCase.Execute(request.Nome, request.Raca, request.TutorId);
+        var id = await _useCase.Execute(
+            request.Nome,
+            request.Raca,
+            request.Idade,
+            request.Peso,
+            request.TutorId
+        );
+
         return Ok(id);
     }
 }
