@@ -12,14 +12,17 @@ public class ConsultaConfiguration : IEntityTypeConfiguration<Consulta>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Veterinario)
-            .IsRequired()
-            .HasMaxLength(150);
-
         builder.Property(x => x.DataConsulta)
             .IsRequired();
 
-        builder.Property(x => x.Encerrada)
+        builder.Property(x => x.Status)
+            .IsRequired();
+
+        builder.HasOne(x => x.Veterinario)
+            .WithMany()
+            .HasForeignKey(x => x.VeterinarioId);
+
+        builder.Property(x => x.PetId)
             .IsRequired();
     }
 }

@@ -12,14 +12,14 @@ public class DisponibilidadeConfiguration : IEntityTypeConfiguration<Disponibili
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Veterinario)
-            .IsRequired()
-            .HasMaxLength(150);
-
         builder.Property(x => x.DataInicio)
             .IsRequired();
 
         builder.Property(x => x.DataFim)
             .IsRequired();
+
+        builder.HasOne(x => x.Veterinario)
+            .WithMany()
+            .HasForeignKey(x => x.VeterinarioId);
     }
 }

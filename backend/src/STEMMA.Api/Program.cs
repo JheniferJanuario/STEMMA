@@ -3,7 +3,7 @@ using STEMMA.Infrastructure.Persistence.Context;
 using STEMMA.Domain.Cadastro.Repositories;
 using STEMMA.Infrastructure.Persistence.Repositories;
 using STEMMA.Application.Cadastro.UseCases.CriarTutor;
-using STEMMA.Application.Cadastro.UseCases.CriarPet;
+using STEMMA.Application.Cadastro.UseCases.Pets;
 
 var builder = WebApplication.CreateBuilder(args);
 

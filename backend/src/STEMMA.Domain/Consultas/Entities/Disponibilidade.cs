@@ -1,10 +1,14 @@
+using STEMMA.Domain.Cadastro.Entities;
+
 namespace STEMMA.Domain.Consultas.Entities;
 
 public class Disponibilidade
 {
     public Guid Id { get; private set; }
 
-    public string Veterinario { get; private set; }
+    public Guid VeterinarioId { get; private set; }
+    
+    public Veterinario Veterinario { get; private set; }
 
     public DateTime DataInicio { get; private set; }
 
@@ -13,27 +17,35 @@ public class Disponibilidade
     protected Disponibilidade() { }
 
     public Disponibilidade(
-        string veterinario,
+        Guid veterinarioId,
         DateTime dataInicio,
         DateTime dataFim)
     {
-        Validar(veterinario, dataInicio, dataFim);
+        Validar(veterinarioId, dataInicio, dataFim);
 
         Id = Guid.NewGuid();
-        Veterinario = veterinario;
+        VeterinarioId = veterinarioId;
         DataInicio = dataInicio;
         DataFim = dataFim;
     }
 
     private void Validar(
-        string veterinario,
+        Guid veterinarioId,
         DateTime dataInicio,
         DateTime dataFim)
     {
-        if (string.IsNullOrWhiteSpace(veterinario))
-            throw new Exception("Veterin·rio obrigatÛrio.");
+        if (veterinarioId == Guid.Empty)
+            throw new ArgumentException("Veterin√°rio obrigat√≥rio.");
 
         if (dataFim <= dataInicio)
-            throw new Exception("Data final deve ser maior que a inicial.");
+            throw new ArgumentException("Data final deve ser maior que a inicial.");
+
+        if (dataInicio < DateTime.UtcNow)
+            throw new ArgumentException("Data inicial inv√°lida.");
+    }
+
+    public bool ConflitaCom(DateTime inicio, DateTime fim)
+    {
+        return inicio < DataFim && fim > DataInicio;
     }
 }
