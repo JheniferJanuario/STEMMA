@@ -19,7 +19,10 @@ public class Prontuario
         string observacoes,
         string diagnostico)
     {
-        Validar(observacoes, diagnostico);
+        Validar(
+            consultaId,
+            observacoes,
+            diagnostico);
 
         Id = Guid.NewGuid();
         ConsultaId = consultaId;
@@ -28,22 +31,31 @@ public class Prontuario
         DataRegistro = DateTime.UtcNow;
     }
 
-    public void AtualizarObservacoes(string observacoes)
-    {
-        if (string.IsNullOrWhiteSpace(observacoes))
-            throw new Exception("Observa珲es obrigat髍ias.");
-
-        Observacoes = observacoes;
-    }
-
-    private void Validar(
+    public void Atualizar(
         string observacoes,
         string diagnostico)
     {
+        Validar(
+            ConsultaId,
+            observacoes,
+            diagnostico);
+
+        Observacoes = observacoes;
+        Diagnostico = diagnostico;
+    }
+
+    private void Validar(
+        Guid consultaId,
+        string observacoes,
+        string diagnostico)
+    {
+        if (consultaId == Guid.Empty)
+            throw new ArgumentException("Consulta obrigat贸ria.");
+
         if (string.IsNullOrWhiteSpace(observacoes))
-            throw new Exception("Observa珲es obrigat髍ias.");
+            throw new ArgumentException("Observa莽玫es obrigat贸rias.");
 
         if (string.IsNullOrWhiteSpace(diagnostico))
-            throw new Exception("Diagn髎tico obrigat髍io.");
+            throw new ArgumentException("Diagn贸stico obrigat贸rio.");
     }
 }

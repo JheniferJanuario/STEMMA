@@ -1,3 +1,6 @@
+using STEMMA.Domain.Cadastro.Entities;
+using STEMMA.Domain.Consultas.Enums;
+
 namespace STEMMA.Domain.Consultas.Entities;
 
 public class Consulta
@@ -6,44 +9,60 @@ public class Consulta
 
     public Guid PetId { get; private set; }
 
+    public Guid VeterinarioId { get; private set; }
+
+    public Veterinario Veterinario { get; private set; }
+
     public DateTime DataConsulta { get; private set; }
 
-    public string Veterinario { get; private set; }
-
-    public bool Encerrada { get; private set; }
+    public StatusConsulta Status { get; private set; }
 
     protected Consulta() { }
 
-    public Consulta(
-        Guid petId,
-        DateTime dataConsulta,
-        string veterinario)
+    public Consulta(Guid petId, Guid veterinarioId, DateTime dataConsulta)
     {
-        Validar(dataConsulta, veterinario);
+        Validar(petId, veterinarioId, dataConsulta);
 
         Id = Guid.NewGuid();
         PetId = petId;
+        VeterinarioId = veterinarioId;
         DataConsulta = dataConsulta;
-        Veterinario = veterinario;
-        Encerrada = false;
+        Status = StatusConsulta.Agendada;
     }
 
-    public void EncerrarConsulta()
+    public void Iniciar()
     {
-        if (Encerrada)
-            throw new Exception("A consulta j· foi encerrada.");
+        if (Status != StatusConsulta.Agendada)
+            throw new Exception("A consulta n√£o pode ser iniciada.");
 
-        Encerrada = true;
+        Status = StatusConsulta.EmAndamento;
     }
 
-    private void Validar(
-        DateTime dataConsulta,
-        string veterinario)
+    public void Encerrar()
     {
-        if (dataConsulta < DateTime.UtcNow)
-            throw new Exception("N„o È permitido agendar consultas no passado.");
+        if (Status != StatusConsulta.EmAndamento)
+            throw new Exception("A consulta n√£o est√° em andamento.");
 
-        if (string.IsNullOrWhiteSpace(veterinario))
-            throw new Exception("Veterin·rio obrigatÛrio.");
+        Status = StatusConsulta.Encerrada;
+    }
+
+    public void Cancelar()
+    {
+        if (Status == StatusConsulta.Encerrada)
+            throw new Exception("Consulta j√° encerrada.");
+
+        Status = StatusConsulta.Cancelada;
+    }
+
+    private void Validar(Guid petId, Guid veterinarioId, DateTime dataConsulta)
+    {
+        if (petId == Guid.Empty)
+            throw new Exception("Pet inv√°lido.");
+
+        if (veterinarioId == Guid.Empty)
+            throw new Exception("Veterin√°rio inv√°lido.");
+
+        if (dataConsulta <= DateTime.UtcNow)
+            throw new Exception("N√£o √© permitido agendar consultas no passado.");
     }
 }

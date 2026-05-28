@@ -11,4 +11,16 @@ public interface IConsultaRepository
     Task<Consulta?> ObterPorIdAsync(Guid id);
 
     Task<List<Consulta>> ListarAsync();
+
+    Task<List<Consulta>> ObterPorVeterinarioAsync(
+        Guid veterinarioId);
+
+    Task<List<Consulta>> ObterPorPetAsync(
+        Guid petId);
+
+    Task<bool> ExisteConsultaNoHorarioAsync(
+        Guid veterinarioId,
+        DateTime dataHora);
+
+    Task<List<Consulta>> ListarFuturasPorPetAsync(Guid petId);
 }

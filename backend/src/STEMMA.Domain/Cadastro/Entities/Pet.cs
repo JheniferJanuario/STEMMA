@@ -1,3 +1,5 @@
+using STEMMA.Domain.Cadastro.Enums;
+
 namespace STEMMA.Domain.Cadastro.Entities;
 
 public class Pet
@@ -12,6 +14,8 @@ public class Pet
 
     public decimal Peso { get; private set; }
 
+    public StatusPet Status { get; private set; }
+
     public Guid TutorId { get; private set; }
 
     public Tutor Tutor { get; private set; }
@@ -25,7 +29,7 @@ public class Pet
         decimal peso,
         Guid tutorId)
     {
-        Validar(nome, raca, idade, peso);
+        Validar(nome, raca, idade, peso, tutorId);
 
         Id = Guid.NewGuid();
         Nome = nome;
@@ -33,32 +37,43 @@ public class Pet
         Idade = idade;
         Peso = peso;
         TutorId = tutorId;
+
+        Status = StatusPet.Ativo;
     }
 
     public void AlterarPeso(decimal peso)
     {
         if (peso <= 0)
-            throw new Exception("Peso inv�lido.");
+            throw new ArgumentException("Peso inválido.");
 
         Peso = peso;
+    }
+
+    public void AlterarStatus(StatusPet status)
+    {
+        Status = status;
     }
 
     private void Validar(
         string nome,
         string raca,
         int idade,
-        decimal peso)
+        decimal peso,
+        Guid tutorId)
     {
         if (string.IsNullOrWhiteSpace(nome))
-            throw new Exception("Nome do pet obrigat�rio.");
+            throw new ArgumentException("Nome do pet obrigatório.");
 
         if (string.IsNullOrWhiteSpace(raca))
-            throw new Exception("Ra�a obrigat�ria.");
+            throw new ArgumentException("Raça obrigatória.");
 
         if (idade < 0)
-            throw new Exception("Idade inv�lida.");
+            throw new ArgumentException("Idade inválida.");
 
         if (peso <= 0)
-            throw new Exception("Peso inv�lido.");
+            throw new ArgumentException("Peso inválido.");
+
+        if (tutorId == Guid.Empty)
+            throw new ArgumentException("Tutor obrigatório.");
     }
 }
