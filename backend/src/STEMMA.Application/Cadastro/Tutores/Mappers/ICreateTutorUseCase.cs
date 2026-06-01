@@ -1,5 +1,8 @@
-namespace STEMMA.Application.Cadastro.UseCases.CreateTutor;
+using STEMMA.Application.Cadastro.DTOs.Requests;
+
+namespace STEMMA.Application.Cadastro.Tutores.UseCases;
+
 public interface ICreateTutorUseCase
 {
-    string Executar(string nome);
+    Task<Guid> ExecuteAsync(CreateTutorRequest request);
 }

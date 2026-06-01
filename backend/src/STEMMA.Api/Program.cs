@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using STEMMA.Infrastructure.Persistence.Context;
 using STEMMA.Domain.Cadastro.Repositories;
 using STEMMA.Infrastructure.Persistence.Repositories;
-using STEMMA.Application.Cadastro.UseCases.CriarTutor;
 using STEMMA.Application.Cadastro.UseCases.Pets;
+using STEMMA.Application.Cadastro.Tutores.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 
