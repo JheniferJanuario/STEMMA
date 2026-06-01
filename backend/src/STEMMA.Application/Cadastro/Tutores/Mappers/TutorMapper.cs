@@ -11,7 +11,8 @@ public static class TutorMapper
         return new Tutor(
             request.Nome,
             request.CPF,
-            request.Email
+            request.Email,
+            request.Senha
         );
     }
 
@@ -22,7 +23,8 @@ public static class TutorMapper
             Id = tutor.Id,
             Nome = tutor.Nome,
             CPF = tutor.CPF,
-            Email = tutor.Email
+            Email = tutor.Email,
+            DataCriacao = tutor.DataCriacao
         };
     }
 
@@ -38,6 +40,6 @@ public static class TutorMapper
         Tutor tutor,
         UpdateTutorRequest request)
     {
-        tutor.AlterarNome(request.Nome);
+        tutor.AlterarNome(request.Nome, request.CPF, request.Email);
     }
 }

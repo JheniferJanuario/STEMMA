@@ -47,6 +47,13 @@ public class TutorRepository : ITutorRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<Tutor?> ObterPorEmailAsync(
+    string email)
+    {
+        return await _context.Tutores
+            .FirstOrDefaultAsync(x => x.Email == email);
+    }
+
     public async Task<List<Tutor>> ListarAsync()
     {
         return await _context.Tutores

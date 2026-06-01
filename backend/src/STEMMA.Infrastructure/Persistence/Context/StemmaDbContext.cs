@@ -14,6 +14,7 @@ public class StemmaDbContext : DbContext
     public DbSet<Tutor> Tutores { get; set; }
 
     public DbSet<Pet> Pets { get; set; }
+    public DbSet<Veterinario> Veterinarios { get; set; }
 
     public DbSet<Consulta> Consultas { get; set; }
 
