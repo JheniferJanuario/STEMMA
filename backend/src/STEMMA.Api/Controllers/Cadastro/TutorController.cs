@@ -1,55 +1,67 @@
 using Microsoft.AspNetCore.Mvc;
 using STEMMA.Application.Cadastro.DTOs.Requests;
-using STEMMA.Application.Cadastro.Tutores.Services;
+using STEMMA.Application.Cadastro.Tutores.UseCases;
 
 namespace STEMMA.Api.Controllers.Cadastro;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/tutores")]
 public class TutorController : ControllerBase
 {
-    private readonly ITutorService _tutorService;
+    private readonly ICreateTutorUseCase _createTutorUseCase;
+    private readonly GetTutorByIdUseCase _getTutorByIdUseCase;
+    private readonly ListTutorsUseCase _listTutorsUseCase;
+    private readonly UpdateTutorUseCase _updateTutorUseCase;
+    private readonly DeleteTutorUseCase _deleteTutorUseCase;
 
     public TutorController(
-        ITutorService tutorService)
+        ICreateTutorUseCase createTutorUseCase,
+        GetTutorByIdUseCase getTutorByIdUseCase,
+        ListTutorsUseCase listTutorsUseCase,
+        UpdateTutorUseCase updateTutorUseCase,
+        DeleteTutorUseCase deleteTutorUseCase)
     {
-        _tutorService = tutorService;
+        _createTutorUseCase = createTutorUseCase;
+        _getTutorByIdUseCase = getTutorByIdUseCase;
+        _listTutorsUseCase = listTutorsUseCase;
+        _updateTutorUseCase = updateTutorUseCase;
+        _deleteTutorUseCase = deleteTutorUseCase;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Criar(
+    public async Task<IActionResult> Create(
         [FromBody] CreateTutorRequest request)
     {
-        var id = await _tutorService.CriarAsync(request);
+        var id = await _createTutorUseCase.ExecuteAsync(request);
 
         return CreatedAtAction(
-            nameof(ObterPorId),
+            nameof(GetById),
             new { id },
             id);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> ObterPorId(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        var tutor = await _tutorService.ObterPorIdAsync(id);
+        var tutor = await _getTutorByIdUseCase.ExecuteAsync(id);
 
         return Ok(tutor);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Listar()
+    public async Task<IActionResult> GetAll()
     {
-        var tutores = await _tutorService.ListarAsync();
+        var tutors = await _listTutorsUseCase.ExecuteAsync();
 
-        return Ok(tutores);
+        return Ok(tutors);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Atualizar(
+    public async Task<IActionResult> Update(
         Guid id,
         [FromBody] UpdateTutorRequest request)
     {
-        var tutor = await _tutorService.AtualizarAsync(
+        var tutor = await _updateTutorUseCase.ExecuteAsync(
             id,
             request);
 
@@ -57,9 +69,9 @@ public class TutorController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Remover(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        await _tutorService.RemoverAsync(id);
+        await _deleteTutorUseCase.ExecuteAsync(id);
 
         return NoContent();
     }
