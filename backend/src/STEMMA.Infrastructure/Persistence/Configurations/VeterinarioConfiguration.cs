@@ -1,25 +1,26 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 using STEMMA.Domain.Cadastro.Entities;
 
 namespace STEMMA.Infrastructure.Persistence.Configurations;
 
-public class TutorConfiguration : IEntityTypeConfiguration<Tutor>
+public class VeterinarioConfiguration
+    : IEntityTypeConfiguration<Veterinario>
 {
-    public void Configure(EntityTypeBuilder<Tutor> builder)
+    public void Configure(
+        EntityTypeBuilder<Veterinario> builder)
     {
-        builder.ToTable("Tutores");
+        builder.ToTable("Veterinarios");
 
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Nome)
             .IsRequired()
-            .HasMaxLength(150);
+            .HasMaxLength(100);
 
-        builder.Property(x => x.CPF)
+        builder.Property(x => x.CRMV)
             .IsRequired()
-            .HasMaxLength(14);
+            .HasMaxLength(30);
 
         builder.Property(x => x.Email)
             .IsRequired()
@@ -29,12 +30,11 @@ public class TutorConfiguration : IEntityTypeConfiguration<Tutor>
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(x => x.Especialidade)
+            .IsRequired()
+            .HasMaxLength(100);
+
         builder.Property(x => x.DataCriacao)
             .IsRequired();
-
-        builder.HasMany(x => x.Pets)
-            .WithOne(x => x.Tutor)
-            .HasForeignKey(x => x.TutorId);
-
     }
 }

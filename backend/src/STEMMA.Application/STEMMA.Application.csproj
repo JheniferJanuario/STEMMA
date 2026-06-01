@@ -1,6 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Compile Remove="Cadastro\DTOs\**" />
+    <Compile Remove="Cadastro\NovaPasta\**" />
+    <Compile Remove="NovaPasta1\**" />
+    <Compile Remove="NovaPasta\**" />
+    <EmbeddedResource Remove="Cadastro\DTOs\**" />
+    <EmbeddedResource Remove="Cadastro\NovaPasta\**" />
+    <EmbeddedResource Remove="NovaPasta1\**" />
+    <EmbeddedResource Remove="NovaPasta\**" />
+    <None Remove="Cadastro\DTOs\**" />
+    <None Remove="Cadastro\NovaPasta\**" />
+    <None Remove="NovaPasta1\**" />
+    <None Remove="NovaPasta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\STEMMA.Domain\STEMMA.Domain.csproj" />
   </ItemGroup>
 

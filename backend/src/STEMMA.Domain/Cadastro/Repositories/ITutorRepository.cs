@@ -11,6 +11,7 @@ public interface ITutorRepository
     Task RemoverAsync(Guid id);
 
     Task<Tutor?> ObterPorIdAsync(Guid id);
+    Task<Tutor?> ObterPorEmailAsync(string email);
 
     Task<List<Tutor>> ListarAsync();
 }
