@@ -1,1 +1,0 @@
-namespace STEMMA.Application.Consultas.UseCases.AgendarConsulta; public class AgendarConsultaUseCase : IAgendarConsultaUseCase {}

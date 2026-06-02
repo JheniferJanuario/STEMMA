@@ -1,1 +1,0 @@
-namespace STEMMA.Application.Consultas.UseCases.EncerrarConsulta; public interface IEncerrarConsultaUseCase {}

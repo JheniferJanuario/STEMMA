@@ -11,7 +11,7 @@ public class Consulta
 
     public Guid VeterinarioId { get; private set; }
 
-    public Veterinario Veterinario { get; private set; }
+    public Veterinario? Veterinario { get; private set; }
 
     public DateTime DataConsulta { get; private set; }
 
@@ -38,10 +38,10 @@ public class Consulta
         Status = StatusConsulta.EmAndamento;
     }
 
-    public void Encerrar()
+    public void Concluir()
     {
         if (Status != StatusConsulta.EmAndamento)
-            throw new Exception("A consulta não está em andamento.");
+            throw new Exception("Só consultas em andamento podem ser concluídas.");
 
         Status = StatusConsulta.Encerrada;
     }
@@ -65,4 +65,27 @@ public class Consulta
         if (dataConsulta <= DateTime.UtcNow)
             throw new Exception("Não é permitido agendar consultas no passado.");
     }
+
+    public void AlterarHorario(DateTime novaDataConsulta)
+    {
+        if (Status != StatusConsulta.Agendada)
+            throw new Exception("Só consultas agendadas podem ser alteradas.");
+
+        if (novaDataConsulta <= DateTime.UtcNow)
+            throw new Exception("Data inválida.");
+
+        DataConsulta = novaDataConsulta;
+    }
+
+    public void AlterarVeterinario(Guid novoVeterinarioId)
+    {
+        if (Status != StatusConsulta.Agendada)
+            throw new Exception("Só consultas agendadas podem ser alteradas.");
+
+        if (novoVeterinarioId == Guid.Empty)
+            throw new Exception("Veterinário inválido.");
+
+        VeterinarioId = novoVeterinarioId;
+    }
+
 }

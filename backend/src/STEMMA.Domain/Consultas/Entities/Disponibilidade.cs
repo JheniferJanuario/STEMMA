@@ -48,4 +48,6 @@ public class Disponibilidade
     {
         return inicio < DataFim && fim > DataInicio;
     }
+
+    
 }
