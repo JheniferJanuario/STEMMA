@@ -74,9 +74,28 @@ public class ConsultaRepository : IConsultaRepository
         return await _context.Consultas
             .Where(x =>
                 x.PetId == petId &&
-                x.DataConsulta > DateTime.UtcNow &&
-                x.Status != StatusConsulta.Cancelada)
-            .AsNoTracking()
+                x.Status == StatusConsulta.Agendada &&
+                x.DataConsulta > DateTime.UtcNow)
+            .ToListAsync();
+    }
+
+    public async Task<List<Consulta>> ObterPorVeterinarioEPeriodoAsync(
+    Guid veterinarioId,
+    DateTime inicio,
+    DateTime fim)
+    {
+        return await _context.Consultas
+            .Where(x =>
+                x.VeterinarioId == veterinarioId &&
+                x.DataConsulta >= inicio &&
+                x.DataConsulta <= fim)
+            .ToListAsync();
+    }
+
+    public async Task<List<Consulta>> ObterEncerradasAsync()
+    {
+        return await _context.Consultas
+            .Where(x => x.Status == StatusConsulta.Encerrada)
             .ToListAsync();
     }
 }

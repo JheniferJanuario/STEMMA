@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using STEMMA.Application.Cadastro.DTOs.Requests;
 using STEMMA.Application.Cadastro.Veterinarios.DTOs.Requests;
-using STEMMA.Application.Cadastro.Veterinarios.Services;
+using STEMMA.Application.Cadastro.Veterinarios.UseCases;
 
 namespace STEMMA.Api.Controllers.Cadastro;
 
@@ -9,19 +9,31 @@ namespace STEMMA.Api.Controllers.Cadastro;
 [Route("api/[controller]")]
 public class VeterinarioController : ControllerBase
 {
-    private readonly IVeterinarioService _veterinarioService;
+    private readonly CreateVeterinarioUseCase _createUseCase;
+    private readonly GetVeterinarioByIdUseCase _getByIdUseCase;
+    private readonly ListVeterinariosUseCase _listUseCase;
+    private readonly UpdateVeterinarioUseCase _updateUseCase;
+    private readonly DeleteVeterinarioUseCase _deleteUseCase;
 
     public VeterinarioController(
-        IVeterinarioService veterinarioService)
+        CreateVeterinarioUseCase createUseCase,
+        GetVeterinarioByIdUseCase getByIdUseCase,
+        ListVeterinariosUseCase listUseCase,
+        UpdateVeterinarioUseCase updateUseCase,
+        DeleteVeterinarioUseCase deleteUseCase)
     {
-        _veterinarioService = veterinarioService;
+        _createUseCase = createUseCase;
+        _getByIdUseCase = getByIdUseCase;
+        _listUseCase = listUseCase;
+        _updateUseCase = updateUseCase;
+        _deleteUseCase = deleteUseCase;
     }
 
     [HttpPost]
     public async Task<IActionResult> Criar(
         [FromBody] CreateVeterinarioRequest request)
     {
-        var id = await _veterinarioService.CriarAsync(request);
+        var id = await _createUseCase.ExecuteAsync(request);
 
         return CreatedAtAction(
             nameof(ObterPorId),
@@ -32,8 +44,7 @@ public class VeterinarioController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> ObterPorId(Guid id)
     {
-        var veterinario =
-            await _veterinarioService.ObterPorIdAsync(id);
+        var veterinario = await _getByIdUseCase.ExecuteAsync(id);
 
         return Ok(veterinario);
     }
@@ -41,8 +52,7 @@ public class VeterinarioController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Listar()
     {
-        var veterinarios =
-            await _veterinarioService.ListarAsync();
+        var veterinarios = await _listUseCase.ExecuteAsync();
 
         return Ok(veterinarios);
     }
@@ -52,8 +62,7 @@ public class VeterinarioController : ControllerBase
         Guid id,
         [FromBody] UpdateVeterinarioRequest request)
     {
-        var veterinario =
-            await _veterinarioService.AtualizarAsync(id, request);
+        var veterinario = await _updateUseCase.ExecuteAsync(id, request);
 
         return Ok(veterinario);
     }
@@ -61,7 +70,7 @@ public class VeterinarioController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Remover(Guid id)
     {
-        await _veterinarioService.RemoverAsync(id);
+        await _deleteUseCase.ExecuteAsync(id);
 
         return NoContent();
     }

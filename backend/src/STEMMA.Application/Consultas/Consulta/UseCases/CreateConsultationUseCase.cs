@@ -19,15 +19,25 @@ public class CreateConsultationUseCase
 
     public async Task ExecuteAsync(CreateConsultationRequest request)
     {
+        var horarioOcupado =
+            await _consultaRepository.ExisteConsultaNoHorarioAsync(
+                request.VeterinarioId,
+                request.DataConsulta);
+
+        if (horarioOcupado)
+            throw new Exception(
+                "Já existe uma consulta agendada neste horário.");
+
         var disponibilidades = await _disponibilidadeRepository
             .ObterPorVeterinarioAsync(request.VeterinarioId);
 
         var estaDisponivel = disponibilidades.Any(d =>
             request.DataConsulta >= d.DataInicio &&
-            request.DataConsulta <= d.DataFim);
+            request.DataConsulta < d.DataFim);
 
         if (!estaDisponivel)
-            throw new Exception("Veterinário não está disponível neste horário");
+            throw new Exception(
+                "Veterinário não está disponível neste horário.");
 
         var consulta = new Consulta(
             request.PetId,

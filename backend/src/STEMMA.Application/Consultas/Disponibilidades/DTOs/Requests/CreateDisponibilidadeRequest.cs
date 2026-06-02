@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace STEMMA.Application.Consultas.Disponibilidades.DTOs.Requests;
+
+public class CreateDisponibilidadeRequest
+{
+    public Guid VeterinarioId { get; set; }
+
+    public DateTime DataInicio { get; set; }
+
+    public DateTime DataFim { get; set; }
+}

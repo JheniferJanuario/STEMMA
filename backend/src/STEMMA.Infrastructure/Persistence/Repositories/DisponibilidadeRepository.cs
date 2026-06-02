@@ -1,47 +1,86 @@
+using Microsoft.EntityFrameworkCore;
 using STEMMA.Domain.Consultas.Entities;
 using STEMMA.Domain.Consultas.Repositories;
+using STEMMA.Infrastructure.Persistence.Context;
 
 namespace STEMMA.Infrastructure.Persistence.Repositories;
 
 public class DisponibilidadeRepository : IDisponibilidadeRepository
 {
-    public Task AdicionarAsync(Disponibilidade disponibilidade)
+    private readonly StemmaDbContext _context;
+
+    public DisponibilidadeRepository(StemmaDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task AtualizarAsync(Disponibilidade disponibilidade)
+    public async Task AdicionarAsync(Disponibilidade disponibilidade)
     {
-        throw new NotImplementedException();
+        await _context.Disponibilidades.AddAsync(disponibilidade);
+
+        await _context.SaveChangesAsync();
     }
 
-    public Task<bool> ExisteConflitoAsync(Guid veterinarioId, DateTime inicio, DateTime fim)
+    public async Task AtualizarAsync(Disponibilidade disponibilidade)
     {
-        throw new NotImplementedException();
+        _context.Disponibilidades.Update(disponibilidade);
+
+        await _context.SaveChangesAsync();
     }
 
-    public Task<List<Disponibilidade>> ListarAsync()
+    public async Task RemoverAsync(Disponibilidade disponibilidade)
     {
-        throw new NotImplementedException();
+        _context.Disponibilidades.Remove(disponibilidade);
+
+        await _context.SaveChangesAsync();
     }
 
-    public Task<Disponibilidade?> ObterPorIdAsync(Guid id)
+    public async Task<Disponibilidade?> ObterPorIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Disponibilidades
+            .Include(x => x.Veterinario)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public Task<List<Disponibilidade>> ObterPorPeriodoAsync(Guid veterinarioId, DateTime inicio, DateTime fim)
+    public async Task<List<Disponibilidade>> ListarAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Disponibilidades
+            .Include(x => x.Veterinario)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public Task<List<Disponibilidade>> ObterPorVeterinarioAsync(Guid veterinarioId)
+    public async Task<List<Disponibilidade>> ObterPorVeterinarioAsync(Guid veterinarioId)
     {
-        throw new NotImplementedException();
+        return await _context.Disponibilidades
+            .Where(x => x.VeterinarioId == veterinarioId)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public Task RemoverAsync(Disponibilidade disponibilidade)
+    public async Task<List<Disponibilidade>> ObterPorPeriodoAsync(
+        Guid veterinarioId,
+        DateTime inicio,
+        DateTime fim)
     {
-        throw new NotImplementedException();
+        return await _context.Disponibilidades
+            .Where(x =>
+                x.VeterinarioId == veterinarioId &&
+                x.DataInicio < fim &&
+                x.DataFim > inicio)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<bool> ExisteConflitoAsync(
+        Guid veterinarioId,
+        DateTime inicio,
+        DateTime fim)
+    {
+        return await _context.Disponibilidades
+            .AnyAsync(x =>
+                x.VeterinarioId == veterinarioId &&
+                x.DataInicio < fim &&
+                x.DataFim > inicio);
     }
 }
