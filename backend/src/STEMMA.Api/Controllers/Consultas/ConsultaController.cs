@@ -15,6 +15,9 @@ public class ConsultaController : ControllerBase
     private readonly AddMedicalRecordUseCase _addMedicalRecordUseCase;
     private readonly GetConsultationByIdUseCase _getConsultationByIdUseCase;
     private readonly ListConsultationsUseCase _listConsultationsUseCase;
+    private readonly ListConsultationsByPetUseCase _listByPetUseCase;
+    private readonly StartConsultationUseCase _startConsultationUseCase;
+    private readonly ListClosedConsultationsUseCase _listClosedConsultationsUseCase;
 
     public ConsultaController(
         CreateConsultationUseCase createConsultationUseCase,
@@ -23,7 +26,10 @@ public class ConsultaController : ControllerBase
         CompleteConsultationUseCase completeConsultationUseCase,
         AddMedicalRecordUseCase addMedicalRecordUseCase,
         GetConsultationByIdUseCase getConsultationByIdUseCase,
-        ListConsultationsUseCase listConsultationsUseCase)
+        ListConsultationsUseCase listConsultationsUseCase,
+        ListConsultationsByPetUseCase listByPetUseCase,
+        StartConsultationUseCase startConsultationUseCase,
+        ListClosedConsultationsUseCase listClosedConsultationsUseCase)
     {
         _createConsultationUseCase = createConsultationUseCase;
         _updateConsultationUseCase = updateConsultationUseCase;
@@ -32,21 +38,46 @@ public class ConsultaController : ControllerBase
         _addMedicalRecordUseCase = addMedicalRecordUseCase;
         _getConsultationByIdUseCase = getConsultationByIdUseCase;
         _listConsultationsUseCase = listConsultationsUseCase;
+        _listByPetUseCase = listByPetUseCase;
+        _startConsultationUseCase = startConsultationUseCase;
+        _listClosedConsultationsUseCase = listClosedConsultationsUseCase;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(
-        CreateConsultationRequest request)
+        [FromBody] CreateConsultationRequest request)
     {
-        await _createConsultationUseCase.ExecuteAsync(request);
+        try
+        {
+            await _createConsultationUseCase.ExecuteAsync(request);
 
-        return Ok();
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("{id:guid}/start")]
+    public async Task<IActionResult> Start(Guid id)
+    {
+        try
+        {
+            await _startConsultationUseCase.ExecuteAsync(id);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(
         Guid id,
-        UpdateConsultationRequest request)
+        [FromBody] UpdateConsultationRequest request)
     {
         await _updateConsultationUseCase.ExecuteAsync(id, request);
 
@@ -55,7 +86,7 @@ public class ConsultaController : ControllerBase
 
     [HttpPost("cancel")]
     public async Task<IActionResult> Cancel(
-        CancelConsultationRequest request)
+        [FromBody] CancelConsultationRequest request)
     {
         await _cancelConsultationUseCase.ExecuteAsync(request);
 
@@ -72,7 +103,7 @@ public class ConsultaController : ControllerBase
 
     [HttpPost("medical-record")]
     public async Task<IActionResult> AddMedicalRecord(
-        AddMedicalRecordRequest request)
+        [FromBody] AddMedicalRecordRequest request)
     {
         await _addMedicalRecordUseCase.ExecuteAsync(request);
 
@@ -82,7 +113,8 @@ public class ConsultaController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var consultation = await _getConsultationByIdUseCase.ExecuteAsync(id);
+        var consultation =
+            await _getConsultationByIdUseCase.ExecuteAsync(id);
 
         if (consultation is null)
             return NotFound();
@@ -93,8 +125,27 @@ public class ConsultaController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> List()
     {
-        var consultations = await _listConsultationsUseCase.ExecuteAsync();
+        var consultations =
+            await _listConsultationsUseCase.ExecuteAsync();
 
         return Ok(consultations);
+    }
+
+    [HttpGet("historico-pet/{petId:guid}")]
+    public async Task<IActionResult> ListarHistoricoPorPet(Guid petId)
+    {
+        var consultas =
+            await _listByPetUseCase.ExecuteAsync(petId);
+
+        return Ok(consultas);
+    }
+
+    [HttpGet("encerradas")]
+    public async Task<IActionResult> ListarEncerradas()
+    {
+        var consultas =
+            await _listClosedConsultationsUseCase.ExecuteAsync();
+
+        return Ok(consultas);
     }
 }

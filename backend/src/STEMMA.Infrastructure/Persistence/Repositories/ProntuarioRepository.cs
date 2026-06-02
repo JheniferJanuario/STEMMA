@@ -1,33 +1,49 @@
+using Microsoft.EntityFrameworkCore;
 using STEMMA.Domain.Consultas.Entities;
 using STEMMA.Domain.Consultas.Repositories;
+using STEMMA.Infrastructure.Persistence.Context;
 
 namespace STEMMA.Infrastructure.Persistence.Repositories;
 
-
 public class ProntuarioRepository : IProntuarioRepository
 {
-    public Task AdicionarAsync(Prontuario prontuario)
+    private readonly StemmaDbContext _context;
+
+    public ProntuarioRepository(StemmaDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task AtualizarAsync(Prontuario prontuario)
+    public async Task AdicionarAsync(Prontuario prontuario)
     {
-        throw new NotImplementedException();
+        await _context.Prontuarios.AddAsync(prontuario);
+
+        await _context.SaveChangesAsync();
     }
 
-    public Task<List<Prontuario>> ListarAsync()
+    public async Task AtualizarAsync(Prontuario prontuario)
     {
-        throw new NotImplementedException();
+        _context.Prontuarios.Update(prontuario);
+
+        await _context.SaveChangesAsync();
     }
 
-    public Task<Prontuario?> ObterPorConsultaIdAsync(Guid consultaId)
+    public async Task<Prontuario?> ObterPorIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Prontuarios
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public Task<Prontuario?> ObterPorIdAsync(Guid id)
+    public async Task<Prontuario?> ObterPorConsultaIdAsync(Guid consultaId)
     {
-        throw new NotImplementedException();
+        return await _context.Prontuarios
+            .FirstOrDefaultAsync(x => x.ConsultaId == consultaId);
+    }
+
+    public async Task<List<Prontuario>> ListarAsync()
+    {
+        return await _context.Prontuarios
+            .AsNoTracking()
+            .ToListAsync();
     }
 }
