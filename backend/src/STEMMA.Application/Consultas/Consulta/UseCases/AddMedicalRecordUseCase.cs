@@ -27,8 +27,10 @@ public class AddMedicalRecordUseCase
         var prontuario = new Prontuario(
             request.ConsultationId,
             request.Description,
-            request.Diagnostico
-        );
+            request.Diagnostico,
+            request.Tratamento,
+            request.Medicacao,
+            request.Peso);
 
         await _prontuarioRepository.AdicionarAsync(prontuario);
     }

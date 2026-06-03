@@ -1,5 +1,3 @@
-namespace STEMMA.Domain.Consultas.Entities;
-
 public class Prontuario
 {
     public Guid Id { get; private set; }
@@ -10,14 +8,28 @@ public class Prontuario
 
     public string Diagnostico { get; private set; }
 
+    public string Tratamento { get; private set; }
+
+    public string Medicacao { get; private set; }
+
+    public decimal? Peso { get; private set; }
+
     public DateTime DataRegistro { get; private set; }
 
-    protected Prontuario() { }
+    protected Prontuario() {
+        Observacoes = string.Empty;
+        Diagnostico = string.Empty;
+        Tratamento = string.Empty;
+        Medicacao = string.Empty;
+    }
 
     public Prontuario(
         Guid consultaId,
         string observacoes,
-        string diagnostico)
+        string diagnostico,
+        string tratamento,
+        string medicacao,
+        decimal? peso)
     {
         Validar(
             consultaId,
@@ -28,12 +40,18 @@ public class Prontuario
         ConsultaId = consultaId;
         Observacoes = observacoes;
         Diagnostico = diagnostico;
+        Tratamento = tratamento;
+        Medicacao = medicacao;
+        Peso = peso;
         DataRegistro = DateTime.UtcNow;
     }
 
     public void Atualizar(
         string observacoes,
-        string diagnostico)
+        string diagnostico,
+        string tratamento,
+        string medicacao,
+        decimal? peso)
     {
         Validar(
             ConsultaId,
@@ -42,6 +60,9 @@ public class Prontuario
 
         Observacoes = observacoes;
         Diagnostico = diagnostico;
+        Tratamento = tratamento;
+        Medicacao = medicacao;
+        Peso = peso;
     }
 
     private void Validar(

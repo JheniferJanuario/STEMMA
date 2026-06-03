@@ -12,4 +12,5 @@ public interface IProntuarioRepository
     Task<Prontuario?> ObterPorConsultaIdAsync(Guid consultaId);
 
     Task<List<Prontuario>> ListarAsync();
+    Task<List<Prontuario>> ObterPorPetIdAsync(Guid petId);
 }

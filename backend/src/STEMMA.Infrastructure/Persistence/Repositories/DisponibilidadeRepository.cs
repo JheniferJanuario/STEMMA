@@ -47,6 +47,7 @@ public class DisponibilidadeRepository : IDisponibilidadeRepository
         return await _context.Disponibilidades
             .Include(x => x.Veterinario)
             .AsNoTracking()
+            .OrderBy(x => x.DataInicio)
             .ToListAsync();
     }
 
@@ -55,6 +56,7 @@ public class DisponibilidadeRepository : IDisponibilidadeRepository
         return await _context.Disponibilidades
             .Where(x => x.VeterinarioId == veterinarioId)
             .AsNoTracking()
+            .OrderBy(x => x.DataInicio)
             .ToListAsync();
     }
 

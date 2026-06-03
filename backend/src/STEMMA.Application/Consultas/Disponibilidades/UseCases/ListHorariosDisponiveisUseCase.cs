@@ -58,6 +58,8 @@ public class ListHorariosDisponiveisUseCase
             }
         }
 
-        return horariosLivres;
+        return horariosLivres
+            .OrderBy(x => x.Inicio)
+            .ToList();
     }
 }

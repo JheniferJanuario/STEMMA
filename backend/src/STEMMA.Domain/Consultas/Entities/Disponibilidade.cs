@@ -8,7 +8,7 @@ public class Disponibilidade
 
     public Guid VeterinarioId { get; private set; }
     
-    public Veterinario Veterinario { get; private set; }
+    public Veterinario? Veterinario { get; private set; }
 
     public DateTime DataInicio { get; private set; }
 
