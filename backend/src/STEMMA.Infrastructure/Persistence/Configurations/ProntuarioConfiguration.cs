@@ -20,5 +20,8 @@ public class ProntuarioConfiguration
         builder.Property(x => x.Diagnostico)
             .IsRequired()
             .HasMaxLength(500);
+
+        builder.Property(x => x.Peso)
+            .HasPrecision(5, 2);
     }
 }

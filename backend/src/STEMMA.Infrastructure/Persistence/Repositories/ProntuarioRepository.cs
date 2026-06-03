@@ -46,4 +46,16 @@ public class ProntuarioRepository : IProntuarioRepository
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task<List<Prontuario>> ObterPorPetIdAsync(Guid petId)
+    {
+        var consultasDoPet = _context.Consultas
+            .Where(x => x.PetId == petId)
+            .Select(x => x.Id);
+
+        return await _context.Prontuarios
+            .Where(x => consultasDoPet.Contains(x.ConsultaId))
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

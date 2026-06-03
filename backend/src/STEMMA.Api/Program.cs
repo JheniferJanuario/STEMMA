@@ -5,6 +5,7 @@ using STEMMA.Application.Cadastro.UseCases.Pet;
 using STEMMA.Application.Cadastro.UseCases.Pets;
 using STEMMA.Application.Cadastro.Veterinarios.UseCases;
 using STEMMA.Application.Consultas.Disponibilidades.UseCases;
+using STEMMA.Application.Consultas.Prontuarios.UseCases;
 using STEMMA.Application.Consultas.UseCases;
 using STEMMA.Domain.Cadastro.Repositories;
 using STEMMA.Domain.Consultas.Repositories;
@@ -104,6 +105,11 @@ builder.Services.AddScoped<ListConsultationsByPetUseCase>();
 builder.Services.AddScoped<StartConsultationUseCase>();
 
 builder.Services.AddScoped<ListClosedConsultationsUseCase>();
+
+//Prontuario
+builder.Services.AddScoped<GetProntuarioByConsultaIdUseCase>();
+
+builder.Services.AddScoped<GetProntuariosByPetUseCase>();
 
 // Auth
 builder.Services.AddScoped<LoginUseCase>();
