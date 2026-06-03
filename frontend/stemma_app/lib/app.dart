@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:stemma_app/Features/Splash/splash_page.dart';
-import 'package:stemma_app/Features/Splash/welcome_page.dart';
 
 class StemmaApp extends StatelessWidget {
   @override
