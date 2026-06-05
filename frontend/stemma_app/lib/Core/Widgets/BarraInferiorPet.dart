@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:stemma_app/core/constants/app_colors.dart';
+import 'package:stemma_app/Features/Splash/home_page.dart'; 
+import 'package:stemma_app/Features/Splash/calendario_page.dart';
 
 class BarraInferiorPet extends StatelessWidget {
-  const BarraInferiorPet({super.key, required int abaAtiva});
+  final int abaAtiva;
+
+  const BarraInferiorPet({required this.abaAtiva});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +15,6 @@ class BarraInferiorPet extends StatelessWidget {
 
     return Container(
       height: 88,
-
       margin: const EdgeInsets.only(left: 24, right: 24, bottom: 15),
       decoration: BoxDecoration(
         color: primaryGreen,
@@ -24,29 +27,37 @@ class BarraInferiorPet extends StatelessWidget {
           ),
         ],
       ),
-
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        selectedItemColor: iconColor,   
+        currentIndex: abaAtiva, 
+        selectedItemColor: Colors.white, 
         unselectedItemColor: iconColor,
         showSelectedLabels: false,   
         showUnselectedLabels: false, 
         onTap: (index) {
-          if (index == 0) {
-            // Home
+          if (index == 0 && abaAtiva != 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
           } 
-          else if (index == 1) {
-            // Agenda
+          else if (index == 1 && abaAtiva != 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CalendarioPage()),
+            );
           } 
           else if (index == 2) {
-            // Pets
+            
           } 
+
           else if (index == 3) {
-            // Perfil
+
           }
         },
+
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
