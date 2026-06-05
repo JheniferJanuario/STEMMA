@@ -2,10 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:stemma_app/core/constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
+import 'package:stemma_app/Core/Widgets/FormularioConsulta.dart';
 
 class CalendarioPage extends StatefulWidget {
-  const CalendarioPage({super.key});
-
+    const CalendarioPage();
   @override
   State<CalendarioPage> createState() => _CalendarioPageState();
 }
@@ -14,60 +14,30 @@ class _CalendarioPageState extends State<CalendarioPage> {
   DateTime _focusedDate = DateTime.now(); 
   DateTime _selectedDate = DateTime.now(); 
   
-  final Color primaryGreen = const Color(0xFF1B4D45);
-  
+  final Color primaryGreen = AppColors.primaryGreen;  
+
   final List<String> _horarios = [
-    "08:00", 
-    "09:00", 
-    "10:00", 
-    "11:00", 
-    "12:00", 
-    "13:00", 
-    "14:00", 
-    "15:00", 
-    "16:00", 
-    "17:00", 
-    "18:00"
+    "08:00", "09:00", "10:00", "11:00", "12:00", 
+    "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"
   ];
 
-  static final String hoje = DateTime.now().toIso8601String().substring(0, 10);
-
-  final List<Map<String, dynamic>> _consultasDaApi = [
+  final List<Map<String, dynamic>> _consultasMock = [
     {
       "petId": "Theo - Banho e Tosa",
       "veterinarioId": "Dr. Carlos",
-      "dataConsulta": "${hoje}T09:00:00.000Z" 
+      "dataConsulta": "${DateTime.now().toIso8601String().substring(0, 10)}T09:00:00.000Z" 
     },
     {
       "petId": "Luna - Vacina HJM",
       "veterinarioId": "Dra. Márcia",
-      "dataConsulta": "${hoje}T11:00:00.000Z" 
+      "dataConsulta": "${DateTime.now().toIso8601String().substring(0, 10)}T11:00:00.000Z" 
     }
   ];
 
-  final List<String> _weekdays = [
-    "Seg", 
-    "Ter", 
-    "Qua", 
-    "Qui", 
-    "Sex", 
-    "Sáb", 
-    "Dom"];
-  
+  final List<String> _weekdays = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
   final List<String> _months = [
-    "", 
-    "Janeiro", 
-    "Fevereiro", 
-    "Março", 
-    "Abril", 
-    "Maio", 
-    "Junho", 
-    "Julho", 
-    "Agosto", 
-    "Setembro", 
-    "Outubro", 
-    "Novembro", 
-    "Dezembro"
+    "", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
   ];
 
   List<DateTime> _getDaysInMonth(DateTime date) {
@@ -76,11 +46,15 @@ class _CalendarioPageState extends State<CalendarioPage> {
   }
 
   void _nextMonth() {
-    setState(() { _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1, 1); });
+    setState(() { 
+      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1, 1); 
+    });
   }
 
   void _previousMonth() {
-    setState(() { _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1, 1); });
+    setState(() { 
+      _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1, 1); 
+    });
   }
 
   @override
@@ -123,7 +97,6 @@ class _CalendarioPageState extends State<CalendarioPage> {
                 ),
                 const SizedBox(height: 24),
 
-                // --- SELETOR DE MESES ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -153,7 +126,6 @@ class _CalendarioPageState extends State<CalendarioPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // --- CALENDÁRIO HORIZONTAL ---
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: SizedBox(
@@ -226,31 +198,59 @@ class _CalendarioPageState extends State<CalendarioPage> {
                 ),
                 const SizedBox(height: 32),
                 
-                // --- LISTA DE AGENDAMENTOS DO DIA ---
-                const Text(
-                  "Agendamentos",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Agendamentos",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                          ),
+                          builder: (context) => FormularioConsulta(), 
+                        );
+                      },
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.calendar_month_outlined, 
+                          color: primaryGreen, 
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 Column(
                   children: [
                     for (var hora in _horarios) ...[
                       Builder(
                         builder: (context) {
-                          Map<String, dynamic>? consultaDoHorario;
-                          
-                          // Corre para ver se algum item do nosso "Falso Banco" bate com o dia e hora selecionados
-                          for (var consulta in _consultasDaApi) {
-                            DateTime dataDaConsulta = DateTime.parse(consulta['dataConsulta']);
+                          Map<String, dynamic>? itemAgendado;
+
+                          for (var consulta in _consultasMock) {
+                            DateTime dataItem = DateTime.parse(consulta['dataConsulta']);
                             
-                            if (dataDaConsulta.day == _selectedDate.day &&
-                                dataDaConsulta.month == _selectedDate.month &&
-                                dataDaConsulta.year == _selectedDate.year) {
+                            if (dataItem.day == _selectedDate.day &&
+                                dataItem.month == _selectedDate.month &&
+                                dataItem.year == _selectedDate.year) {
                               
-                              String horaFormatada = "${dataDaConsulta.hour.toString().padLeft(2, '0')}:00";
-                              if (horaFormatada == hora) {
-                                consultaDoHorario = consulta;
+                              String agendaHora = "${dataItem.hour.toString().padLeft(2, '0')}:00";
+                              if (agendaHora == hora) {
+                                itemAgendado = consulta;
                                 break;
                               }
                             }
@@ -261,7 +261,6 @@ class _CalendarioPageState extends State<CalendarioPage> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Hora fixa na esquerda
                                 SizedBox(
                                   width: 70,
                                   child: Text(
@@ -274,10 +273,8 @@ class _CalendarioPageState extends State<CalendarioPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                
-                                // Direita: mostra o card mockado ou deixa o espaço vazio
                                 Expanded(
-                                  child: consultaDoHorario != null
+                                  child: itemAgendado != null
                                       ? Container(
                                           padding: const EdgeInsets.all(14),
                                           decoration: BoxDecoration(
@@ -288,18 +285,18 @@ class _CalendarioPageState extends State<CalendarioPage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "${consultaDoHorario['petId']}", // Exibe o texto de teste do Pet/Serviço
+                                                "${itemAgendado['petId']}", 
                                                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                               ),
                                               const SizedBox(height: 4),
                                               Text(
-                                                "Veterinário: ${consultaDoHorario['veterinarioId']}", 
+                                                "Veterinário: ${itemAgendado['veterinarioId']}", 
                                                 style: const TextStyle(color: Colors.white70, fontSize: 11),
                                               ),
                                             ],
                                           ),
                                         )
-                                      : const SizedBox(height: 50), // Linha em branco vazia
+                                      : const SizedBox(height: 50), 
                                 ),
                               ],
                             ),
