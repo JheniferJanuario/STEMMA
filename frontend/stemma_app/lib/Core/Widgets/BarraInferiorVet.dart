@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stemma_app/core/constants/app_colors.dart';
-import 'package:stemma_app/Core/vet/home_veterinario_page.dart'; 
-import 'package:stemma_app/Core/vet/calendario_veterinario_page.dart';
+import 'package:stemma_app/Features/vet/home_veterinario_page.dart'; 
+import 'package:stemma_app/Features/vet/calendario_veterinario_page.dart';
 
 class BarraInferiorVet extends StatelessWidget {
   final int abaAtiva;
