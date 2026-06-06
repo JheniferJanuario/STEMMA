@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:stemma_app/core/constants/app_colors.dart';
-import 'package:stemma_app/Core/tutor/home_page.dart'; 
-import 'package:stemma_app/Core/tutor/calendario_page.dart';
+import 'package:stemma_app/Core/vet/home_veterinario_page.dart'; 
+import 'package:stemma_app/Core/vet/calendario_veterinario_page.dart';
 
-class BarraInferiorPet extends StatelessWidget {
+class BarraInferiorVet extends StatelessWidget {
   final int abaAtiva;
 
-  const BarraInferiorPet({required this.abaAtiva});
+  const BarraInferiorVet({super.key, required this.abaAtiva});
 
   @override
   Widget build(BuildContext context) {
@@ -40,39 +40,23 @@ class BarraInferiorPet extends StatelessWidget {
           if (index == 0 && abaAtiva != 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => const HomeVeterinarioPage()),
             );
           } 
           else if (index == 1 && abaAtiva != 1) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const CalendarioPage()),
+              MaterialPageRoute(builder: (context) => const CalendarioVeterinarioPage()),
             );
           } 
-          else if (index == 2) {
-            
-          } 
-
-          else if (index == 3) {
-
-          }
         },
-
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.person), // Ícone do Perfil/Home do Vet
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pets),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.calendar_month), // Calendário do Vet
             label: '',
           ),
         ],
