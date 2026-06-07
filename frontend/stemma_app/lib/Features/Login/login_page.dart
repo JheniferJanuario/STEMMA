@@ -6,6 +6,8 @@ import 'package:stemma_app/Features/Login/register_page_tutor.dart';
 import 'package:stemma_app/Features/Login/register_page_veterinario.dart';
 import 'package:stemma_app/core/constants/app_colors.dart';
 import 'package:stemma_app/core/widgets/primary_button.dart';
+import 'package:stemma_app/Features/tutor/home_page.dart';
+import 'package:stemma_app/Features/vet/home_veterinario_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,14 +31,13 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const LoginHeader(),
 
-            SizedBox(height: 130),
+            const SizedBox(height: 130),
 
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  
                   children: [
                     const Text(
                       'Acessar',
@@ -51,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       width: 60, 
                       height: 2, 
-                      color: AppColors.primaryGreen
+                      color: AppColors.primaryGreen,
                     ),
 
                     const SizedBox(height: 28),
@@ -98,9 +99,8 @@ class _LoginPageState extends State<LoginPage> {
                             text: 'Não possui conta? ',
                             style: TextStyle(
                               color: Colors.grey, 
-                              fontSize: 14
+                              fontSize: 14,
                             ),
-
                             children: [
                               TextSpan(
                                 text: 'Cadastre-se.',
@@ -123,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 11, 
-                          color: AppColors.textGrey
+                          color: AppColors.textGrey,
                         ),
                       ),
                     ),
@@ -142,7 +142,19 @@ class _LoginPageState extends State<LoginPage> {
                         width: isDesktop ? 320 : double.infinity,
                         child: PrimaryButton(
                           text: 'Entrar',
-                          onPressed: () => print('Login'), // EDITAR
+                          onPressed: () {
+                            if (isVeterinario) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomeVeterinarioPage()),
+                              );
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomePage()),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ),
