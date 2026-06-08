@@ -1,4 +1,3 @@
-// lib/core/widgets/labeled_text_field.dart
 import 'package:flutter/material.dart';
 
 class LabeledTextField extends StatelessWidget {
@@ -7,6 +6,8 @@ class LabeledTextField extends StatelessWidget {
     required this.label,
     required this.hintText,
     required this.prefixIcon,
+    this.controller,
+    this.keyboardType,
     this.obscureText = false,
     this.suffixIcon,
   });
@@ -14,6 +15,8 @@ class LabeledTextField extends StatelessWidget {
   final String label;
   final String hintText;
   final IconData prefixIcon;
+  final TextEditingController? controller;
+  final TextInputType? keyboardType;
   final bool obscureText;
   final Widget? suffixIcon;
 
@@ -28,6 +31,8 @@ class LabeledTextField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
+          keyboardType: keyboardType,
           obscureText: obscureText,
           decoration: InputDecoration(
             hintText: hintText,

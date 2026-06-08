@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorVet.dart';
 
 class HomeVeterinarioPage extends StatefulWidget {
@@ -34,7 +34,7 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset('assets/loggo.png', width: 140, height: 45, fit: BoxFit.contain),
+                  Image.asset('assets/Loggo.png', width: 140, height: 45, fit: BoxFit.contain),
                   Icon(Icons.notifications_none, color: verdeProjeto, size: 28),
                 ],
               ),
@@ -95,7 +95,7 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
                       children: [
                         CircleAvatar(
                           radius: 35,
-                          backgroundImage: const AssetImage('assets/theo.png'), 
+                          backgroundImage: const AssetImage('assets/theo_image_golden.avif'), 
                           backgroundColor: Colors.grey[200],
                         ),
                         const SizedBox(width: 16),

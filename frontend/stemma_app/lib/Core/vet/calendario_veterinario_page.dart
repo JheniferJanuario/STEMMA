@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorVet.dart';
 
 class CalendarioVeterinarioPage extends StatefulWidget {
@@ -36,7 +36,7 @@ class _CalendarioVeterinarioPageState extends State<CalendarioVeterinarioPage> {
                     icon: const Icon(Icons.arrow_back_ios, size: 24),
                     onPressed: () => Navigator.maybePop(context),
                   ),
-                  Image.asset('assets/loggo.png', width: 130, height: 40, fit: BoxFit.contain),
+                  Image.asset('assets/Loggo.png', width: 130, height: 40, fit: BoxFit.contain),
                 ],
               ),
             ),

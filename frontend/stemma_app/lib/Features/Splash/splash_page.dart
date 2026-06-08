@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
-import 'package:stemma_app/core/widgets/wave_clipper.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
+import 'package:stemma_app/Core/Widgets/wave_clipper.dart';
 import 'package:stemma_app/Features/Splash/welcome_page.dart';
+import 'package:stemma_app/Core/Services/api_service.dart';
+import 'package:stemma_app/Features/tutor/home_page.dart';
+import 'package:stemma_app/Features/vet/home_veterinario_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -21,28 +24,25 @@ class _SplashPageState extends State<SplashPage> {
 
   void _navigateToWelcome() {
     Future.delayed(
-      const Duration(seconds: 2),
-      () {
+      const Duration(seconds: 1),
+      () async {
+        await ApiService.inicializarSessao();
+        if (!mounted) return;
+
+        final destino = ApiService.estaLogado
+            ? (ApiService.usuarioEhVeterinario
+                ? const HomeVeterinarioPage()
+                : const HomePage())
+            : const WelcomePage();
 
         Navigator.pushReplacement(
           context,
-
           PageRouteBuilder(
-            pageBuilder:
-                (_, animation, __) =>
-                    const WelcomePage(),
-
-            transitionsBuilder:
-                (_, animation, __, child) {
-
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
+            pageBuilder: (_, animation, __) => destino,
+            transitionsBuilder: (_, animation, __, child) {
+              return FadeTransition(opacity: animation, child: child);
             },
-
-            transitionDuration:
-                const Duration(milliseconds: 800),
+            transitionDuration: const Duration(milliseconds: 800),
           ),
         );
       },

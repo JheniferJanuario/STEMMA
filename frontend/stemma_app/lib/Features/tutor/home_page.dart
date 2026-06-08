@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
 import 'package:stemma_app/Core/Widgets/CardContador.dart';
 import 'package:stemma_app/Core/Services/api_service.dart';
+import 'package:stemma_app/Features/Login/login_page.dart';
+import 'package:stemma_app/Features/tutor/calendario_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage();
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -14,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final Color verdeProjeto = AppColors.primaryGreen;
 
-  String nomeUsuario = "Tutor";
+  String nomeUsuario = ApiService.usuarioLogadoNome ?? "Tutor";
   String petProximaConsulta = "Nenhum agendamento";
   String dataProximaConsulta = "";
   int qtdFuturos = 0;
@@ -27,59 +29,158 @@ class _HomePageState extends State<HomePage> {
     _buscarDadosDaApi();
   }
 
+  Future<void> _sair() async {
+    await ApiService.sair();
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+      (_) => false,
+    );
+  }
+
+  String? _valor(dynamic item, List<String> chaves) {
+    if (item is! Map) return null;
+    for (final chave in chaves) {
+      if (item.containsKey(chave) && item[chave] != null) {
+        return item[chave].toString();
+      }
+    }
+    return null;
+  }
+
+  String _normalizarStatus(dynamic status) {
+    final s = (status ?? '')
+        .toString()
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('_', '')
+        .trim();
+
+    if (s == '1') return 'agendada';
+    if (s == '2') return 'emandamento';
+    if (s == '3') return 'encerrada';
+    if (s == '4') return 'cancelada';
+    return s;
+  }
+
+  DateTime? _dataConsulta(dynamic consulta) {
+    final raw = _valor(consulta, ['dateTime', 'dataConsulta', 'DateTime', 'DataConsulta']);
+    if (raw == null) return null;
+    return DateTime.tryParse(raw)?.toLocal();
+  }
+
+  bool _consultaNaoEncerrada(dynamic consulta) {
+    final status = _normalizarStatus(_valor(consulta, ['status', 'Status']));
+    return status != 'encerrada' && status != 'cancelada';
+  }
+
+  bool _consultaEncerrada(dynamic consulta) {
+    final status = _normalizarStatus(_valor(consulta, ['status', 'Status']));
+    return status == 'encerrada';
+  }
+
+  bool _ehFuturaOuHoje(dynamic consulta) {
+    final data = _dataConsulta(consulta);
+    if (data == null) return true;
+    final hoje = DateTime.now();
+    final inicioHoje = DateTime(hoje.year, hoje.month, hoje.day);
+    return !data.isBefore(inicioHoje);
+  }
+
   Future<void> _buscarDadosDaApi() async {
-    setState(() => carregando = true);
+    if (mounted) setState(() => carregando = true);
+
     try {
-      // Busca consultas futuras (todas) e encerradas em paralelo
       final results = await Future.wait([
         ApiService.listarConsultas(),
         ApiService.listarConsultasEncerradas(),
+        ApiService.listarPets(),
       ]);
 
-      final futuras = results[0];
-      final encerradas = results[1];
+      final todasConsultas = List<dynamic>.from(results[0]);
+      final encerradasApi = List<dynamic>.from(results[1]);
+      final todosPets = List<dynamic>.from(results[2]);
+      final tutorId = ApiService.usuarioLogadoId;
 
-      // Filtra apenas consultas com data futura para o próximo agendamento
-      final agora = DateTime.now();
-      final proximas = futuras
-          .where((c) {
-            if (c['dateTime'] == null) return false;
-            return DateTime.parse(c['dateTime']).isAfter(agora);
-          })
-          .toList()
-        ..sort((a, b) => DateTime.parse(a['dateTime'])
-            .compareTo(DateTime.parse(b['dateTime'])));
+      final nomesTodosPets = <String, String>{
+        for (final p in todosPets)
+          if (_valor(p, ['id', 'Id']) != null)
+            _valor(p, ['id', 'Id'])!: (_valor(p, ['nome', 'name', 'Nome', 'Name']) ?? 'Pet'),
+      };
+
+      final petsDoTutor = todosPets.where((p) {
+        final petTutorId = _valor(p, ['tutorId', 'TutorId']);
+        return tutorId != null && petTutorId == tutorId;
+      }).toList();
+
+      // Se por algum motivo o tutorId não vier igual ao TutorId do pet,
+      // usamos todos os pets para não esconder os agendamentos na apresentação.
+      final idsPetsTutor = petsDoTutor.isNotEmpty
+          ? petsDoTutor
+              .map((p) => _valor(p, ['id', 'Id']))
+              .whereType<String>()
+              .toSet()
+          : nomesTodosPets.keys.toSet();
+
+      final consultasDoTutor = todasConsultas.where((c) {
+        final petId = _valor(c, ['petId', 'PetId']);
+        return petId != null && idsPetsTutor.contains(petId);
+      }).toList();
+
+      final futuras = consultasDoTutor.where((c) {
+        return _consultaNaoEncerrada(c) && _ehFuturaOuHoje(c);
+      }).toList()
+        ..sort((a, b) {
+          final da = _dataConsulta(a) ?? DateTime(2100);
+          final db = _dataConsulta(b) ?? DateTime(2100);
+          return da.compareTo(db);
+        });
+
+      final encerradasDoTutor = [
+        ...encerradasApi.where((c) {
+          final petId = _valor(c, ['petId', 'PetId']);
+          return petId != null && idsPetsTutor.contains(petId);
+        }),
+        ...consultasDoTutor.where(_consultaEncerrada),
+      ];
 
       String nomePet = "Nenhum agendamento";
       String dataTexto = "";
 
-      if (proximas.isNotEmpty) {
-        final proxima = proximas.first;
-        final data = DateTime.parse(proxima['dateTime']).toLocal();
-        nomePet = "Pet: ${proxima['petId'].toString().substring(0, 8)}...";
-        dataTexto =
-            "Próxima Consulta\n${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year} - ${data.hour.toString().padLeft(2, '0')}:${data.minute.toString().padLeft(2, '0')}";
+      if (futuras.isNotEmpty) {
+        final proxima = futuras.first;
+        final data = _dataConsulta(proxima);
+        final petId = _valor(proxima, ['petId', 'PetId']);
+        nomePet = "Pet: ${petId == null ? 'Pet' : (nomesTodosPets[petId] ?? _formatarGuid(petId))}";
+        if (data != null) {
+          dataTexto =
+              "Próxima Consulta\n${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year} - ${data.hour.toString().padLeft(2, '0')}:${data.minute.toString().padLeft(2, '0')}";
+        }
       }
 
+      if (!mounted) return;
       setState(() {
+        nomeUsuario = ApiService.usuarioLogadoNome ?? "Tutor";
         qtdFuturos = futuras.length;
-        qtdEncerrados = encerradas.length;
+        qtdEncerrados = encerradasDoTutor.length;
         petProximaConsulta = nomePet;
         dataProximaConsulta = dataTexto;
         carregando = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => carregando = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Erro ao carregar dados: $e"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao carregar dados: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+
+  String _formatarGuid(String id) => id.length > 8 ? '${id.substring(0, 8)}...' : id;
 
   @override
   Widget build(BuildContext context) {
@@ -101,15 +202,15 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Image.asset(
-                        'assets/loggo.png',
+                        'assets/Loggo.png',
                         width: 150,
                         height: 50,
                         fit: BoxFit.contain,
                       ),
                       IconButton(
-                        icon: Icon(Icons.notifications_none_outlined,
-                            color: verdeProjeto, size: 28),
-                        onPressed: () {},
+                        tooltip: 'Sair',
+                        icon: Icon(Icons.logout, color: verdeProjeto, size: 28),
+                        onPressed: _sair,
                       ),
                     ],
                   ),
@@ -117,12 +218,14 @@ class _HomePageState extends State<HomePage> {
 
                   Row(
                     children: [
-                      Text(
-                        "Olá, $nomeUsuario !",
-                        style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2D3142)),
+                      Expanded(
+                        child: Text(
+                          "Olá, $nomeUsuario !",
+                          style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2D3142)),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Icon(Icons.pets, color: verdeProjeto, size: 24),
@@ -135,7 +238,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Card: prontuários / resumo clínica
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
@@ -170,7 +272,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Card: próxima consulta (vem da API)
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
@@ -222,7 +323,13 @@ class _HomePageState extends State<HomePage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20)),
                                 ),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const CalendarioPage()),
+                                  );
+                                  if (mounted) _buscarDadosDaApi();
+                                },
                                 child: const Text("Ver agenda",
                                     style: TextStyle(
                                         fontSize: 11,
@@ -242,7 +349,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Contadores vindos da API
                   carregando
                       ? const Center(child: CircularProgressIndicator())
                       : Row(
@@ -269,7 +375,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BarraInferiorPet(abaAtiva: 0),
+      bottomNavigationBar: const BarraInferiorPet(abaAtiva: 0),
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorVet.dart';
 import 'package:stemma_app/Core/Services/api_service.dart';
+import 'package:stemma_app/Features/Login/login_page.dart';
 
 class HomeVeterinarioPage extends StatefulWidget {
   const HomeVeterinarioPage({super.key});
@@ -19,6 +20,8 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
   // Consulta em andamento que o vet vai finalizar
   dynamic _consultaAtiva;
   List<dynamic> _consultasFuturas = [];
+  Map<String, String> _nomesPets = {};
+  Map<String, String> _nomesVeterinarios = {};
   bool _carregando = true;
   bool _finalizando = false;
 
@@ -37,22 +40,36 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
   Future<void> _buscarConsultas() async {
     setState(() => _carregando = true);
     try {
-      final lista = await ApiService.listarConsultas();
+      final results = await Future.wait([
+        ApiService.listarConsultas(),
+        ApiService.listarPets(),
+        ApiService.listarVeterinarios(),
+      ]);
+      final lista = results[0];
+      final pets = results[1];
+      final vets = results[2];
 
-      // Separa consultas futuras e pega a mais próxima como "ativa"
-      final agora = DateTime.now();
+      final vetLogadoId = ApiService.usuarioLogadoId;
       final futuras = lista.where((c) {
-        final raw = c['dateTime'] ?? c['dataConsulta'];
-        if (raw == null) return false;
-        return DateTime.parse(raw.toString()).isAfter(agora);
+        final vetId = (c['veterinarianId'] ?? c['veterinarioId'])?.toString();
+        final status = (c['status'] ?? '').toString().toLowerCase();
+        if (vetLogadoId != null && vetId != vetLogadoId) return false;
+        final statusNormalizado = _normalizarStatus(status);
+        return statusNormalizado == 'agendada' || statusNormalizado == 'emandamento';
       }).toList()
         ..sort((a, b) {
+          int prioridade(dynamic c) => _statusEh(c, 'EmAndamento') ? 0 : 1;
+          final pa = prioridade(a);
+          final pb = prioridade(b);
+          if (pa != pb) return pa.compareTo(pb);
           final da = DateTime.parse((a['dateTime'] ?? a['dataConsulta']).toString());
           final db = DateTime.parse((b['dateTime'] ?? b['dataConsulta']).toString());
           return da.compareTo(db);
         });
 
       setState(() {
+        _nomesPets = {for (final p in pets) p['id'].toString(): (p['nome'] ?? p['name'] ?? 'Pet').toString()};
+        _nomesVeterinarios = {for (final v in vets) v['id'].toString(): (v['nome'] ?? v['name'] ?? 'Veterinário').toString()};
         _consultasFuturas = futuras;
         _consultaAtiva = futuras.isNotEmpty ? futuras.first : null;
         _carregando = false;
@@ -67,6 +84,65 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
           ),
         );
       }
+    }
+  }
+
+  String _normalizarStatus(dynamic status) {
+    final s = (status ?? '')
+        .toString()
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('_', '')
+        .trim();
+
+    if (s == '1') return 'agendada';
+    if (s == '2') return 'emandamento';
+    if (s == '3') return 'encerrada';
+    if (s == '4') return 'cancelada';
+    return s;
+  }
+
+  bool _statusEh(dynamic consulta, String status) {
+    final atual = _normalizarStatus(consulta?['status']);
+    final esperado = _normalizarStatus(status);
+    return atual == esperado;
+  }
+
+  Future<void> _sair() async {
+    await ApiService.sair();
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+      (_) => false,
+    );
+  }
+
+  Future<void> _iniciarConsulta() async {
+    if (_consultaAtiva == null) return;
+    setState(() => _finalizando = true);
+    try {
+      final id = _consultaAtiva['id'].toString();
+      await ApiService.iniciarConsulta(id);
+
+      if (!mounted) return;
+      setState(() {
+        _consultaAtiva['status'] = 'EmAndamento';
+        _finalizando = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Consulta colocada em andamento.'), backgroundColor: Colors.green),
+      );
+      await _buscarConsultas();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao iniciar consulta: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _finalizando = false);
     }
   }
 
@@ -106,6 +182,7 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
         );
         // Recarrega para mostrar o próximo atendimento
         await _buscarConsultas();
+        if (mounted) setState(() => _finalizando = false);
       }
     } catch (e) {
       setState(() => _finalizando = false);
@@ -123,7 +200,7 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
   @override
   Widget build(BuildContext context) {
     final nomePet = _consultaAtiva != null
-        ? "Pet: ${_formatarGuid(_consultaAtiva['petId'])}"
+        ? "Pet: ${_nomePet(_consultaAtiva['petId'])}"
         : "Nenhuma consulta pendente";
 
     return Scaffold(
@@ -141,9 +218,9 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset('assets/loggo.png',
+                    Image.asset('assets/Loggo.png',
                         width: 140, height: 45, fit: BoxFit.contain),
-                    Icon(Icons.notifications_none, color: verdeProjeto, size: 28),
+                    IconButton(icon: Icon(Icons.logout, color: verdeProjeto, size: 26), onPressed: _sair),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -151,8 +228,8 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back_ios, size: 20),
-                      onPressed: () => Navigator.maybePop(context),
+                      icon: const Icon(Icons.refresh, size: 20),
+                      onPressed: _buscarConsultas,
                     ),
                     const Spacer(),
                     const Text(
@@ -250,7 +327,7 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
                                                 BorderRadius.circular(8),
                                           ),
                                           child: Text(
-                                            _consultaAtiva['status'] ?? 'Agendado',
+                                            _textoStatus(_consultaAtiva['status']),
                                             style: TextStyle(
                                                 fontSize: 11,
                                                 color: verdeProjeto,
@@ -297,11 +374,11 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
                               height: 38,
                               child: TextField(
                                 controller: _prontuarioController,
-                                enabled: _consultaAtiva != null,
+                                enabled: _consultaAtiva != null && _statusEh(_consultaAtiva, 'EmAndamento'),
                                 decoration: InputDecoration(
                                   hintText: _consultaAtiva == null
                                       ? "Nenhuma consulta ativa"
-                                      : "Descreva o atendimento...",
+                                      : (_statusEh(_consultaAtiva, 'Agendada') ? "Clique em colocar em andamento primeiro" : "Descreva o atendimento..."),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 12),
                                   border: OutlineInputBorder(
@@ -320,16 +397,16 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
                                       borderRadius: BorderRadius.circular(12)),
                                   elevation: 0,
                                 ),
-                                onPressed: (_finalizando ||
-                                        _consultaAtiva == null)
+                                onPressed: (_finalizando || _consultaAtiva == null)
                                     ? null
-                                    : _finalizarConsulta,
+                                    : (_statusEh(_consultaAtiva, 'Agendada') ? _iniciarConsulta : _finalizarConsulta),
                                 child: _finalizando
-                                    ? const CircularProgressIndicator(
-                                        color: Colors.white)
-                                    : const Text(
-                                        "Finalizar Consulta",
-                                        style: TextStyle(
+                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    : Text(
+                                        _statusEh(_consultaAtiva, 'Agendada')
+                                            ? "Colocar em andamento"
+                                            : "Finalizar Consulta",
+                                        style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
@@ -352,11 +429,33 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
     );
   }
 
+
+  String _nomePet(dynamic id) {
+    if (id == null) return 'N/A';
+    final chave = id.toString();
+    return _nomesPets[chave] ?? _formatarGuid(chave);
+  }
+
+  String _nomeVeterinario(dynamic id) {
+    if (id == null) return 'N/A';
+    final chave = id.toString();
+    return _nomesVeterinarios[chave] ?? _formatarGuid(chave);
+  }
+
   String _formatarGuid(dynamic id) {
     if (id == null) return 'N/A';
     return id.toString().length > 8
         ? id.toString().substring(0, 8) + '...'
         : id.toString();
+  }
+
+  String _textoStatus(dynamic status) {
+    final s = _normalizarStatus(status);
+    if (s == 'agendada') return 'Agendada';
+    if (s == 'emandamento') return 'Em andamento';
+    if (s == 'encerrada') return 'Encerrada';
+    if (s == 'cancelada') return 'Cancelada';
+    return status?.toString() ?? 'Agendada';
   }
 
   String _formatarData(dynamic raw) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
 import 'package:stemma_app/Core/Widgets/CardContador.dart';
 
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Image.asset(
-                      'assets/loggo.png', 
+                      'assets/Loggo.png', 
                       width: 150,
                       height: 50,
                       fit: BoxFit.contain,
