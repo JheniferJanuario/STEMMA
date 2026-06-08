@@ -1,4 +1,4 @@
-using STEMMA.Domain.Consultas.Entities;
+﻿using STEMMA.Domain.Consultas.Entities;
 using STEMMA.Domain.Consultas.Repositories;
 using STEMMA.Application.Consultas.DTOs.Requests;
 
@@ -24,12 +24,23 @@ public class AddMedicalRecordUseCase
         if (consulta is null)
             throw new Exception("Consulta não encontrada");
 
+        var observacoes = string.IsNullOrWhiteSpace(request.Description)
+            ? "Prontuário registrado."
+            : request.Description.Trim();
+
+        var diagnostico = string.IsNullOrWhiteSpace(request.Diagnostico)
+            ? observacoes
+            : request.Diagnostico.Trim();
+
+        var tratamento = request.Tratamento?.Trim() ?? string.Empty;
+        var medicacao = request.Medicacao?.Trim() ?? string.Empty;
+
         var prontuario = new Prontuario(
             request.ConsultationId,
-            request.Description,
-            request.Diagnostico,
-            request.Tratamento,
-            request.Medicacao,
+            observacoes,
+            diagnostico,
+            tratamento,
+            medicacao,
             request.Peso);
 
         await _prontuarioRepository.AdicionarAsync(prontuario);

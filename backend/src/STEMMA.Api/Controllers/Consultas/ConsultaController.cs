@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using STEMMA.Application.Consultas.DTOs.Requests;
 using STEMMA.Application.Consultas.UseCases;
 
@@ -96,18 +96,32 @@ public class ConsultaController : ControllerBase
     [HttpPost("{id:guid}/complete")]
     public async Task<IActionResult> Complete(Guid id)
     {
-        await _completeConsultationUseCase.ExecuteAsync(id);
+        try
+        {
+            await _completeConsultationUseCase.ExecuteAsync(id);
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPost("medical-record")]
     public async Task<IActionResult> AddMedicalRecord(
         [FromBody] AddMedicalRecordRequest request)
     {
-        await _addMedicalRecordUseCase.ExecuteAsync(request);
+        try
+        {
+            await _addMedicalRecordUseCase.ExecuteAsync(request);
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{id:guid}")]

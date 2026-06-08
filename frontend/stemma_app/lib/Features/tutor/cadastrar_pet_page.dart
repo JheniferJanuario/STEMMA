@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
-import 'package:stemma_app/core/widgets/primary_button.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
+import 'package:stemma_app/Core/Widgets/primary_button.dart';
+import 'package:stemma_app/Core/Services/api_service.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
 
 class CadastrarPetPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _CadastrarPetPageState extends State<CadastrarPetPage> {
   final TextEditingController _idadeController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
   final TextEditingController _tutorIdController = TextEditingController();
+  bool _carregando = false;
 
   @override
   void dispose() {
@@ -66,8 +68,36 @@ class _CadastrarPetPageState extends State<CadastrarPetPage> {
     );
   }
 
-  void _submeterFormulario() {
-    if (_formKey.currentState!.validate()) {
+  Future<void> _submeterFormulario() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final tutorIdDigitado = _tutorIdController.text.trim();
+    final tutorId = tutorIdDigitado.isNotEmpty
+        ? tutorIdDigitado
+        : ApiService.usuarioLogadoId;
+
+    if (tutorId == null || tutorId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Informe o Tutor ID ou faça login como tutor antes de cadastrar o pet.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _carregando = true);
+
+    try {
+      await ApiService.cadastrarPet(
+        nome: _nomeController.text.trim(),
+        raca: _racaController.text.trim(),
+        idade: int.parse(_idadeController.text.trim()),
+        peso: double.parse(_pesoController.text.trim().replaceAll(',', '.')),
+        tutorId: tutorId,
+      );
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Pet cadastrado com sucesso!'),
@@ -75,7 +105,15 @@ class _CadastrarPetPageState extends State<CadastrarPetPage> {
         ),
       );
 
-      Navigator.pop(context);
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao cadastrar pet: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _carregando = false);
     }
   }
 
@@ -208,11 +246,11 @@ class _CadastrarPetPageState extends State<CadastrarPetPage> {
                 ),
                 const SizedBox(height: 20),
 
-                _buildFieldLabel('Tutor ID (Opcional)'),
+                _buildFieldLabel('Tutor ID'),
                 TextFormField(
                   controller: _tutorIdController,
                   textInputAction: TextInputAction.done,
-                  decoration: _buildInputDecoration('Código identificador do tutor', Icons.person_search_outlined),
+                  decoration: _buildInputDecoration('Use o ID do tutor logado ou digite manualmente', Icons.person_search_outlined),
                   validator: (value) {
                     return null;
                   },
@@ -220,8 +258,8 @@ class _CadastrarPetPageState extends State<CadastrarPetPage> {
                 const SizedBox(height: 40),
 
                 PrimaryButton(
-                  text: 'Adicionar Pet',
-                  onPressed: _submeterFormulario,
+                  text: _carregando ? 'Salvando...' : 'Adicionar Pet',
+                  onPressed: _carregando ? null : _submeterFormulario,
                 ),
                 const SizedBox(height: 24),
               ],

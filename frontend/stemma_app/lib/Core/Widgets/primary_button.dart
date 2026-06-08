@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
-
+import 'package:stemma_app/Core/Constants/app_colors.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const PrimaryButton({
     super.key,
@@ -19,22 +18,20 @@ class PrimaryButton extends StatelessWidget {
       height: 58,
       child: ElevatedButton(
         onPressed: onPressed,
-
         style: ElevatedButton.styleFrom(
-          backgroundColor:AppColors.primaryGreen,
+          backgroundColor: AppColors.primaryGreen,
+          disabledBackgroundColor: AppColors.textGrey.withValues(alpha: 0.4),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
-
         child: Text(
           text,
           style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: AppColors.lightBackground
+            color: AppColors.lightBackground,
           ),
         ),
       ),

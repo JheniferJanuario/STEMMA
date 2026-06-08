@@ -1,4 +1,4 @@
-public class Prontuario
+﻿public class Prontuario
 {
     public Guid Id { get; private set; }
 
@@ -38,10 +38,10 @@ public class Prontuario
 
         Id = Guid.NewGuid();
         ConsultaId = consultaId;
-        Observacoes = observacoes;
-        Diagnostico = diagnostico;
-        Tratamento = tratamento;
-        Medicacao = medicacao;
+        Observacoes = observacoes.Trim();
+        Diagnostico = diagnostico.Trim();
+        Tratamento = tratamento?.Trim() ?? string.Empty;
+        Medicacao = medicacao?.Trim() ?? string.Empty;
         Peso = peso;
         DataRegistro = DateTime.UtcNow;
     }
@@ -58,10 +58,10 @@ public class Prontuario
             observacoes,
             diagnostico);
 
-        Observacoes = observacoes;
-        Diagnostico = diagnostico;
-        Tratamento = tratamento;
-        Medicacao = medicacao;
+        Observacoes = observacoes.Trim();
+        Diagnostico = diagnostico.Trim();
+        Tratamento = tratamento?.Trim() ?? string.Empty;
+        Medicacao = medicacao?.Trim() ?? string.Empty;
         Peso = peso;
     }
 

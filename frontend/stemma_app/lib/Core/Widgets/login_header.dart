@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
-import 'package:stemma_app/core/widgets/wave_clipper.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
+import 'package:stemma_app/Core/Widgets/wave_clipper.dart';
 
 class LoginHeader extends StatelessWidget {
   const LoginHeader({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
-import 'package:stemma_app/core/widgets/wave_clipper.dart';
-import 'package:stemma_app/core/widgets/primary_button.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
+import 'package:stemma_app/Core/Widgets/wave_clipper.dart';
+import 'package:stemma_app/Core/Widgets/primary_button.dart';
 import 'package:stemma_app/Features/Login/login_page.dart';
 
 class WelcomePage extends StatelessWidget {

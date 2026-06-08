@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:stemma_app/core/constants/app_colors.dart';
+import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
 import 'package:stemma_app/Core/Widgets/FormularioConsulta.dart';
 
@@ -88,7 +88,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
                       ),
                     ),
                     Image.asset(
-                      'assets/loggo.png', 
+                      'assets/Loggo.png', 
                       width: 172,          
                       height: 52,          
                       fit: BoxFit.contain, 
