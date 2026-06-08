@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using STEMMA.Application.Auth.DTOs;
 using STEMMA.Application.Auth.UseCases;
 
@@ -20,9 +20,16 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(
         [FromBody] LoginRequest request)
     {
-        var response =
-            await _loginUseCase.ExecuteAsync(request);
+        try
+        {
+            var response =
+                await _loginUseCase.ExecuteAsync(request);
 
-        return Ok(response);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
     }
 }

@@ -61,7 +61,7 @@ builder.Services.AddScoped<UpdatePetUseCase>();
 
 builder.Services.AddScoped<InactivatePetUseCase>();
 
-// Veterin�rio
+// Veterinário
 builder.Services.AddScoped<CreateVeterinarioUseCase>();
 
 builder.Services.AddScoped<GetVeterinarioByIdUseCase>();
@@ -135,7 +135,11 @@ app.UseSwaggerUI();
 
 app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
+// Em desenvolvimento local, não forçamos HTTPS para facilitar o consumo pelo Flutter Web.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
