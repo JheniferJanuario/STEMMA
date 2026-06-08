@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\T-GAMER\Documents\william-stemma\STEMMA\frontend\stemma_app\build\windows\x64\CMakeFiles\35257ccd17a27edf22c2f22b86a3fc29\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{40335556-AE2E-3353-95B1-BDCFFA56B9C0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

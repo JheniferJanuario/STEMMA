@@ -1,0 +1,1 @@
+ C:\\Users\\T-GAMER\\Documents\\william-stemma\\STEMMA\\frontend\\stemma_app\\.dart_tool\\flutter_build\\6af32333ebb8858a7ea9916f0cc411c0\\native_assets.json: 

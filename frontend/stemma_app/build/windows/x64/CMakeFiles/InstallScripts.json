@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/T-GAMER/Documents/william-stemma/STEMMA/frontend/stemma_app/build/windows/x64/cmake_install.cmake",
+		"C:/Users/T-GAMER/Documents/william-stemma/STEMMA/frontend/stemma_app/build/windows/x64/flutter/cmake_install.cmake",
+		"C:/Users/T-GAMER/Documents/william-stemma/STEMMA/frontend/stemma_app/build/windows/x64/runner/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

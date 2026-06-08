@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\T-GAMER\Documents\william-stemma\STEMMA\frontend\stemma_app\build\windows\x64\CMakeFiles\390446e4283dc0fd780b1149431463ff\flutter_windows.dll.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\T-GAMER\Documents\william-stemma\STEMMA\frontend\stemma_app\build\windows\x64\CMakeFiles\4d2027b57b6576ee5f65416d4e5a1ccb\flutter_assemble.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\T-GAMER\Documents\william-stemma\STEMMA\frontend\stemma_app\windows\flutter\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\T-GAMER\Documents\william-stemma\STEMMA\frontend\stemma_app\build\windows\x64\flutter\CMakeFiles\flutter_assemble" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{40335556-AE2E-3353-95B1-BDCFFA56B9C0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

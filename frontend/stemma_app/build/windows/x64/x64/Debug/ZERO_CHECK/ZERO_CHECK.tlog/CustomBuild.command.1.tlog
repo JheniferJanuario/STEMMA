@@ -1,0 +1,10 @@
+^C:\USERS\T-GAMER\DOCUMENTS\WILLIAM-STEMMA\STEMMA\FRONTEND\STEMMA_APP\BUILD\WINDOWS\X64\CMAKEFILES\35257CCD17A27EDF22C2F22B86A3FC29\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/T-GAMER/Documents/william-stemma/STEMMA/frontend/stemma_app/windows -BC:/Users/T-GAMER/Documents/william-stemma/STEMMA/frontend/stemma_app/build/windows/x64 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/T-GAMER/Documents/william-stemma/STEMMA/frontend/stemma_app/build/windows/x64/stemma_app.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
