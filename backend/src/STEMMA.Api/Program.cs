@@ -150,7 +150,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider
         .GetRequiredService<StemmaDbContext>();
 
-    context.Database.EnsureCreated();
+    context.Database.Migrate();
 }
 
 app.Run();
