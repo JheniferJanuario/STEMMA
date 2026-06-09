@@ -1,1 +1,0 @@
-namespace STEMMA.Infrastructure.ExternalServices; public class EmailService {}
