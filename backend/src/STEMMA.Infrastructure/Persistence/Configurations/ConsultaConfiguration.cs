@@ -24,5 +24,8 @@ public class ConsultaConfiguration : IEntityTypeConfiguration<Consulta>
 
         builder.Property(x => x.PetId)
             .IsRequired();
+
+        builder.HasIndex(x => new { x.VeterinarioId, x.DataConsulta })
+       .IsUnique();
     }
 }

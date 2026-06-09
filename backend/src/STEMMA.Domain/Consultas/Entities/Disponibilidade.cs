@@ -40,8 +40,8 @@ public class Disponibilidade
         if (dataFim <= dataInicio)
             throw new ArgumentException("Data final deve ser maior que a inicial.");
 
-        if (dataInicio < DateTime.UtcNow)
-            throw new ArgumentException("Data inicial inválida.");
+        // if (dataInicio < DateTime.UtcNow)
+        //     throw new ArgumentException("Data inicial inválida.");
     }
 
     public bool ConflitaCom(DateTime inicio, DateTime fim)

@@ -62,8 +62,8 @@ public class Consulta
         if (veterinarioId == Guid.Empty)
             throw new Exception("Veterinário inválido.");
 
-        if (dataConsulta <= DateTime.UtcNow)
-            throw new Exception("Não é permitido agendar consultas no passado.");
+        // if (dataConsulta <= DateTime.UtcNow)
+        //     throw new Exception("Não é permitido agendar consultas no passado.");
     }
 
     public void AlterarHorario(DateTime novaDataConsulta)
