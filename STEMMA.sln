@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STEMMA.Application", "backe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STEMMA.Infrastructure", "backend\src\STEMMA.Infrastructure\STEMMA.Infrastructure.csproj", "{00DD6D90-3D42-4DCE-9AC0-95EED40F1C01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STEMMA.Shared", "backend\src\STEMMA.Shared\STEMMA.Shared.csproj", "{90D106CE-FB6C-4BF7-8170-46D1B91F0844}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,18 +73,6 @@ Global
 		{00DD6D90-3D42-4DCE-9AC0-95EED40F1C01}.Release|x64.Build.0 = Release|Any CPU
 		{00DD6D90-3D42-4DCE-9AC0-95EED40F1C01}.Release|x86.ActiveCfg = Release|Any CPU
 		{00DD6D90-3D42-4DCE-9AC0-95EED40F1C01}.Release|x86.Build.0 = Release|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Debug|x64.Build.0 = Debug|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Debug|x86.Build.0 = Debug|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Release|Any CPU.Build.0 = Release|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Release|x64.ActiveCfg = Release|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Release|x64.Build.0 = Release|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Release|x86.ActiveCfg = Release|Any CPU
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +83,8 @@ Global
 		{A1B20E5C-AE84-4628-A2E4-2EB38AC9F1CB} = {0F9113EE-888A-26D2-68B0-4A7D0A2A8745}
 		{6A1BF2C5-0BD7-43B1-83BF-66D06F365318} = {0F9113EE-888A-26D2-68B0-4A7D0A2A8745}
 		{00DD6D90-3D42-4DCE-9AC0-95EED40F1C01} = {0F9113EE-888A-26D2-68B0-4A7D0A2A8745}
-		{90D106CE-FB6C-4BF7-8170-46D1B91F0844} = {0F9113EE-888A-26D2-68B0-4A7D0A2A8745}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F2B63EE-A534-4748-B7D0-9F4AABC0A872}
 	EndGlobalSection
 EndGlobal

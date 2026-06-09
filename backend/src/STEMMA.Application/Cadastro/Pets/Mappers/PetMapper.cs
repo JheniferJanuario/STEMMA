@@ -43,11 +43,11 @@ public static class PetMapper
 
     // Update Request → Entity (aplica alterações)
     public static void UpdateEntity(Pet pet, UpdatePetRequest request)
-{
+    {
     if (request.Peso != pet.Peso)
         pet.AlterarPeso(request.Peso);
 
     if (request.Status != pet.Status)
         pet.AlterarStatus(request.Status);
-}
+    }
 }
