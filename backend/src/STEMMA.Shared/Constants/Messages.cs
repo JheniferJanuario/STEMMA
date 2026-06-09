@@ -1,1 +1,0 @@
-namespace STEMMA.Shared.Constants; public static class Messages {}

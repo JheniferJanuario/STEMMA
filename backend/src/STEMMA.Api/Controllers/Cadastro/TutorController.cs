@@ -8,14 +8,14 @@ namespace STEMMA.Api.Controllers.Cadastro;
 [Route("api/tutores")]
 public class TutorController : ControllerBase
 {
-    private readonly ICreateTutorUseCase _createTutorUseCase;
+    private readonly CreateTutorUseCase _createTutorUseCase;
     private readonly GetTutorByIdUseCase _getTutorByIdUseCase;
     private readonly ListTutorsUseCase _listTutorsUseCase;
     private readonly UpdateTutorUseCase _updateTutorUseCase;
     private readonly DeleteTutorUseCase _deleteTutorUseCase;
 
     public TutorController(
-        ICreateTutorUseCase createTutorUseCase,
+        CreateTutorUseCase createTutorUseCase,
         GetTutorByIdUseCase getTutorByIdUseCase,
         ListTutorsUseCase listTutorsUseCase,
         UpdateTutorUseCase updateTutorUseCase,

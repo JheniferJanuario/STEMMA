@@ -1,1 +1,0 @@
-namespace STEMMA.Shared.Utils; public class Pagination {}

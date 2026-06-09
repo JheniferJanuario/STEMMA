@@ -4,7 +4,7 @@ using STEMMA.Domain.Cadastro.Repositories;
 
 namespace STEMMA.Application.Cadastro.Tutores.UseCases;
 
-public class CreateTutorUseCase : ICreateTutorUseCase
+public class CreateTutorUseCase
 {
     private readonly ITutorRepository _tutorRepository;
 
