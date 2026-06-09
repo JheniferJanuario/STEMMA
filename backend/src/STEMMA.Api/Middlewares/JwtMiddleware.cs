@@ -1,1 +1,0 @@
-namespace STEMMA.Api.Middlewares; public class JwtMiddleware {}
