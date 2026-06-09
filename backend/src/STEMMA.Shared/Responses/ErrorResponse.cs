@@ -1,1 +1,0 @@
-namespace STEMMA.Shared.Responses; public class ErrorResponse {}

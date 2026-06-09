@@ -40,7 +40,7 @@ builder.Services.AddScoped<IDisponibilidadeRepository, DisponibilidadeRepository
 builder.Services.AddScoped<IProntuarioRepository, ProntuarioRepository>();
 
 // Tutor
-builder.Services.AddScoped<ICreateTutorUseCase, CreateTutorUseCase>();
+builder.Services.AddScoped<CreateTutorUseCase>();
 
 builder.Services.AddScoped<GetTutorByIdUseCase>();
 
