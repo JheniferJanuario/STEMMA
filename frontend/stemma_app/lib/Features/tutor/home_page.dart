@@ -142,7 +142,6 @@ class _HomePageState extends State<HomePage> {
           final petId = _valor(c, ['petId', 'PetId']);
           return petId != null && idsPetsTutor.contains(petId);
         }),
-        ...consultasDoTutor.where(_consultaEncerrada),
       ];
 
       String nomePet = "Nenhum agendamento";
