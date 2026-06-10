@@ -12,7 +12,7 @@ using STEMMA.Infrastructure.Persistence.Context;
 namespace STEMMA.Infrastructure.Migrations
 {
     [DbContext(typeof(StemmaDbContext))]
-    [Migration("20260610170642_InitialCreate")]
+    [Migration("20260610184055_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
