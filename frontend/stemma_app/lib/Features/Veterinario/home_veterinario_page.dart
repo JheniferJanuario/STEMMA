@@ -34,6 +34,7 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
 
   Future<void> _buscarConsultas() async {
     setState(() => _carregando = true);
+
     try {
       final resultados = await Future.wait([
         ApiService.listarConsultas(),
@@ -42,34 +43,89 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
 
       final lista = List<dynamic>.from(resultados[0]);
       final pets = List<dynamic>.from(resultados[1]);
-      final vetLogadoId = ApiService.usuarioLogadoId;
+      final vetId = ApiService.usuarioLogadoId;
 
-      final consultasFiltradas = lista.where((consulta) {
-        final vetId = (consulta['veterinarianId'] ?? consulta['veterinarioId'])?.toString();
-        final status = _normalizarStatus(consulta['status']);
-        final pertenceAoVet = vetLogadoId == null || vetId == vetLogadoId;
-        return pertenceAoVet && (status == 'agendada' || status == 'emandamento');
-      }).toList();
-
-      consultasFiltradas.sort((a, b) {
-        final dataA = DateTime.tryParse((a['dateTime'] ?? a['dataConsulta']).toString()) ?? DateTime(2100);
-        final dataB = DateTime.tryParse((b['dateTime'] ?? b['dataConsulta']).toString()) ?? DateTime(2100);
-        return dataA.compareTo(dataB);
-      });
+      final filtradas = lista.where((c) {
+        final idVet = (c['veterinarianId'] ?? c['veterinarioId'])?.toString();
+        final status = _normalizarStatus(c['status']);
+        final ehDesteVet = vetId == null || idVet == vetId;
+        return ehDesteVet && (status == 'agendada' || status == 'emandamento');
+      }).toList()
+        ..sort((a, b) {
+          final dtA = DateTime.tryParse((a['dateTime'] ?? a['dataConsulta']).toString()) ?? DateTime(2100);
+          final dtB = DateTime.tryParse((b['dateTime'] ?? b['dataConsulta']).toString()) ?? DateTime(2100);
+          return dtA.compareTo(dtB);
+        });
 
       setState(() {
         _nomesPets = {
-          for (final pet in pets)
-            if (pet['id'] != null) pet['id'].toString(): (pet['nome'] ?? pet['name'] ?? 'Pet').toString(),
+          for (final p in pets)
+            if (p['id'] != null)
+              p['id'].toString(): (p['nome'] ?? p['name'] ?? 'Pet').toString()
         };
-        _consultas = consultasFiltradas;
-        _consultaAtiva = consultasFiltradas.isEmpty ? null : consultasFiltradas.first;
+        _consultas = filtradas;
+        _consultaAtiva = filtradas.isEmpty ? null : filtradas.first;
         _carregando = false;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() => _carregando = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar consultas: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao carregar consultas: $e')),
+      );
+    }
+  }
+
+  Future<void> _iniciarConsulta() async {
+    if (_consultaAtiva == null) return;
+    setState(() => _salvando = true);
+
+    try {
+      await ApiService.iniciarConsulta(_consultaAtiva['id'].toString());
+      await _buscarConsultas();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Consulta em andamento.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao iniciar: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _salvando = false);
+    }
+  }
+
+  Future<void> _finalizarConsulta() async {
+    if (_consultaAtiva == null) return;
+
+    final texto = _prontuarioController.text.trim();
+    if (texto.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha o prontuário antes de finalizar.')),
+      );
+      return;
+    }
+
+    setState(() => _salvando = true);
+    try {
+      final id = _consultaAtiva['id'].toString();
+      await ApiService.adicionarProntuario(consultationId: id, descricao: texto);
+      await ApiService.finalizarConsulta(id);
+      _prontuarioController.clear();
+      await _buscarConsultas();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Consulta finalizada.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao finalizar: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _salvando = false);
     }
   }
 
@@ -83,58 +139,17 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
     );
   }
 
-  Future<void> _iniciarConsulta() async {
-    if (_consultaAtiva == null) return;
-    setState(() => _salvando = true);
-    try {
-      await ApiService.iniciarConsulta(_consultaAtiva['id'].toString());
-      await _buscarConsultas();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Consulta em andamento.')));
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao iniciar: $e')));
-    } finally {
-      if (mounted) setState(() => _salvando = false);
-    }
-  }
-
-  Future<void> _finalizarConsulta() async {
-    if (_consultaAtiva == null) return;
-
-    final texto = _prontuarioController.text.trim();
-    if (texto.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Preencha o prontuário.')));
-      return;
-    }
-
-    setState(() => _salvando = true);
-    try {
-      final id = _consultaAtiva['id'].toString();
-      await ApiService.adicionarProntuario(consultationId: id, descricao: texto);
-      await ApiService.finalizarConsulta(id);
-      _prontuarioController.clear();
-      await _buscarConsultas();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Consulta finalizada.')));
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao finalizar: $e')));
-    } finally {
-      if (mounted) setState(() => _salvando = false);
-    }
-  }
 
   String _normalizarStatus(dynamic status) {
-    final texto = (status ?? '').toString().toLowerCase().replaceAll(' ', '').replaceAll('_', '');
-    if (texto == '1') return 'agendada';
-    if (texto == '2') return 'emandamento';
-    if (texto == '3') return 'encerrada';
-    if (texto == '4') return 'cancelada';
-    return texto;
+    final s = (status ?? '').toString().toLowerCase().replaceAll(' ', '').replaceAll('_', '');
+    if (s == '1') return 'agendada';
+    if (s == '2') return 'emandamento';
+    if (s == '3') return 'encerrada';
+    if (s == '4') return 'cancelada';
+    return s;
   }
 
-  bool _statusEh(String status) {
+  bool _statusAtualEh(String status) {
     if (_consultaAtiva == null) return false;
     return _normalizarStatus(_consultaAtiva['status']) == _normalizarStatus(status);
   }
@@ -142,26 +157,26 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
   String _nomePet(dynamic id) {
     if (id == null) return 'Pet';
     final chave = id.toString();
-    return _nomesPets[chave] ?? _formatarGuid(chave);
+    return _nomesPets[chave] ?? _cortarId(chave);
   }
 
-  String _formatarGuid(String id) => id.length > 8 ? '${id.substring(0, 8)}...' : id;
+  String _cortarId(String id) => id.length > 8 ? '${id.substring(0, 8)}...' : id;
 
   String _formatarData(dynamic raw) {
-    if (raw == null) return 'Data não informada';
-    final data = DateTime.parse(raw.toString()).toLocal();
-    final dia = data.day.toString().padLeft(2, '0');
-    final mes = data.month.toString().padLeft(2, '0');
-    final hora = data.hour.toString().padLeft(2, '0');
-    final minuto = data.minute.toString().padLeft(2, '0');
-    return '$dia/$mes/${data.year} $hora:$minuto';
+    if (raw == null) return 'Sem data';
+    final dt = DateTime.parse(raw.toString()).toLocal();
+    final d = dt.day.toString().padLeft(2, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    final h = dt.hour.toString().padLeft(2, '0');
+    final min = dt.minute.toString().padLeft(2, '0');
+    return '$d/$m/${dt.year} $h:$min';
   }
 
   @override
   Widget build(BuildContext context) {
     final temConsulta = _consultaAtiva != null;
     final petId = temConsulta ? (_consultaAtiva['petId'] ?? _consultaAtiva['PetId']) : null;
-    final data = temConsulta ? (_consultaAtiva['dateTime'] ?? _consultaAtiva['dataConsulta']) : null;
+    final dataRaw = temConsulta ? (_consultaAtiva['dateTime'] ?? _consultaAtiva['dataConsulta']) : null;
 
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
@@ -169,7 +184,12 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
         backgroundColor: AppColors.lightBackground,
         elevation: 0,
         title: Image.asset('assets/Loggo.png', width: 130),
-        actions: [IconButton(onPressed: _sair, icon: const Icon(Icons.logout, color: AppColors.primaryGreen))],
+        actions: [
+          IconButton(
+            onPressed: _sair,
+            icon: const Icon(Icons.logout, color: AppColors.primaryGreen),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _buscarConsultas,
@@ -178,52 +198,74 @@ class _HomeVeterinarioPageState extends State<HomeVeterinarioPage> {
           children: [
             const SimpleTitle(text: 'Área do Veterinário'),
             const SizedBox(height: 8),
-            Text('Consultas futuras: ${_consultas.length}'),
+            Text(
+              'Consultas pendentes: ${_consultas.length}',
+              style: const TextStyle(color: AppColors.textGrey),
+            ),
             const SizedBox(height: 20),
+
             SimpleCard(
               child: _carregando
                   ? const Center(child: CircularProgressIndicator())
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Consulta atual', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        const Text(
+                          'Consulta atual',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
                         const SizedBox(height: 12),
                         if (!temConsulta)
                           const Text('Nenhuma consulta pendente.')
                         else ...[
                           Text('Pet: ${_nomePet(petId)}'),
-                          Text('Data: ${_formatarData(data)}'),
+                          Text('Data: ${_formatarData(dataRaw)}'),
                           Text('Status: ${_consultaAtiva['status'] ?? 'Agendada'}'),
                         ],
                       ],
                     ),
             ),
+
             if (temConsulta) ...[
               SimpleTextField(
                 label: 'Prontuário',
-                hint: _statusEh('agendada') ? 'Coloque a consulta em andamento primeiro' : 'Digite o atendimento',
+                hint: _statusAtualEh('agendada')
+                    ? 'Coloque a consulta em andamento primeiro'
+                    : 'Digite o atendimento aqui',
                 controller: _prontuarioController,
                 maxLines: 4,
-                enabled: _statusEh('emandamento'),
+                enabled: _statusAtualEh('emandamento'),
               ),
               SimpleButton(
-                text: _salvando ? 'Salvando...' : (_statusEh('agendada') ? 'Colocar em andamento' : 'Finalizar consulta'),
-                onPressed: _salvando ? null : (_statusEh('agendada') ? _iniciarConsulta : _finalizarConsulta),
+                text: _salvando
+                    ? 'Salvando...'
+                    : (_statusAtualEh('agendada') ? 'Colocar em andamento' : 'Finalizar consulta'),
+                onPressed: _salvando
+                    ? null
+                    : (_statusAtualEh('agendada') ? _iniciarConsulta : _finalizarConsulta),
               ),
             ],
-            const SizedBox(height: 20),
-            const Text('Lista de consultas', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+
+            const SizedBox(height: 24),
+
+            const Text(
+              'Todas as consultas',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             const SizedBox(height: 10),
+
             if (_consultas.isEmpty && !_carregando)
               const Text('Nenhuma consulta encontrada.')
             else
-              ..._consultas.map((consulta) {
-                final pet = _nomePet(consulta['petId'] ?? consulta['PetId']);
-                final consultaData = consulta['dateTime'] ?? consulta['dataConsulta'];
-                return SimpleCard(
-                  child: Text('Pet: $pet\n${_formatarData(consultaData)}\nStatus: ${consulta['status'] ?? '-'}'),
-                );
-              }),
+              ..._consultas.map(
+                (consulta) => SimpleCard(
+                  child: Text(
+                    'Pet: ${_nomePet(consulta['petId'] ?? consulta['PetId'])}'
+                    '\n${_formatarData(consulta['dateTime'] ?? consulta['dataConsulta'])}'
+                    '\nStatus: ${consulta['status'] ?? '-'}',
+                  ),
+                ),
+              ),
           ],
         ),
       ),
