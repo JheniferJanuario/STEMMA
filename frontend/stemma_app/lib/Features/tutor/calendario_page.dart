@@ -3,7 +3,7 @@ import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Services/api_service.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
 import 'package:stemma_app/Core/Widgets/FormularioConsulta.dart';
-import 'package:stemma_app/Features/tutor/home_page.dart';
+import 'package:stemma_app/Features/Tutor/home_page.dart';
 
 class CalendarioPage extends StatefulWidget {
   const CalendarioPage({super.key});

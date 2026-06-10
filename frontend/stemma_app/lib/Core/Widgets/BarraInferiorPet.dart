@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:stemma_app/Core/Constants/app_colors.dart';
-import 'package:stemma_app/Features/tutor/home_page.dart'; 
-import 'package:stemma_app/Features/tutor/calendario_page.dart';
-import 'package:stemma_app/Features/tutor/pet_list_page.dart';
-import 'package:stemma_app/Features/tutor/perfil_tutor_page.dart';
+import 'package:stemma_app/Features/Tutor/home_page.dart'; 
+import 'package:stemma_app/Features/Tutor/calendario_page.dart';
+import 'package:stemma_app/Features/Tutor/pet_list_page.dart';
+import 'package:stemma_app/Features/Tutor/perfil_tutor_page.dart';
 
 class BarraInferiorPet extends StatelessWidget {
   final int abaAtiva;
