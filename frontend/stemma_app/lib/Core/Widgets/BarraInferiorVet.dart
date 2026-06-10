@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stemma_app/Core/Constants/app_colors.dart';
-import 'package:stemma_app/Features/vet/home_veterinario_page.dart'; 
-import 'package:stemma_app/Features/vet/calendario_veterinario_page.dart';
+import 'package:stemma_app/Features/Veterinario/home_veterinario_page.dart'; 
+import 'package:stemma_app/Features/Veterinario/calendario_veterinario_page.dart';
 
 class BarraInferiorVet extends StatelessWidget {
   final int abaAtiva;
@@ -52,11 +52,11 @@ class BarraInferiorVet extends StatelessWidget {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.person), // Ícone do Perfil/Home do Vet
+            icon: Icon(Icons.person), 
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month), // Calendário do Vet
+            icon: Icon(Icons.calendar_month), 
             label: '',
           ),
         ],

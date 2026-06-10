@@ -3,8 +3,8 @@ import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/wave_clipper.dart';
 import 'package:stemma_app/Features/Splash/welcome_page.dart';
 import 'package:stemma_app/Core/Services/api_service.dart';
-import 'package:stemma_app/Features/tutor/home_page.dart';
-import 'package:stemma_app/Features/vet/home_veterinario_page.dart';
+import 'package:stemma_app/Features/Tutor/home_page.dart';
+import 'package:stemma_app/Features/Veterinario/home_veterinario_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});

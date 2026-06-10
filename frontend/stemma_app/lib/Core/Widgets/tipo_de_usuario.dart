@@ -1,9 +1,9 @@
-// lib/core/widgets/user_type_selector.dart
+// lib/core/widgets/tipo_de_usuario.dart
 import 'package:flutter/material.dart';
 import 'package:stemma_app/Core/Constants/app_colors.dart';
 
-class UserTypeSelector extends StatelessWidget {
-  const UserTypeSelector({
+class TipoDeUsuario extends StatelessWidget {
+  const TipoDeUsuario({
     super.key,
     required this.isVeterinario,
     required this.onChanged,

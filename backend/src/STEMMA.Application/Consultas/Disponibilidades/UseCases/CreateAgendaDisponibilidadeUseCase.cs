@@ -23,7 +23,7 @@ public class CreateAgendaDisponibilidadeUseCase
             throw new Exception("Horário final deve ser maior que o inicial.");
 
         var horarioAtual = inicio;
-
+        //loop que trava o pc
         while (horarioAtual.AddMinutes(request.DuracaoMinutos) <= fim)
         {
             var horarioFim = horarioAtual.AddMinutes(request.DuracaoMinutos);

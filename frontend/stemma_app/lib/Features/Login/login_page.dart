@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:stemma_app/Core/Services/api_service.dart';
 import 'package:stemma_app/Core/Widgets/label_text_field.dart';
 import 'package:stemma_app/Core/Widgets/login_header.dart';
-import 'package:stemma_app/Core/Widgets/type_selector.dart';
+import 'package:stemma_app/Core/Widgets/tipo_de_usuario.dart';
 import 'package:stemma_app/Features/Login/register_page_tutor.dart';
 import 'package:stemma_app/Features/Login/register_page_veterinario.dart';
 import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Widgets/primary_button.dart';
-import 'package:stemma_app/Features/tutor/home_page.dart';
-import 'package:stemma_app/Features/vet/home_veterinario_page.dart';
+import 'package:stemma_app/Features/Tutor/home_page.dart';
+import 'package:stemma_app/Features/Veterinario/home_veterinario_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    UserTypeSelector(
+                    TipoDeUsuario(
                       isVeterinario: isVeterinario,
                       onChanged: (value) => setState(() => isVeterinario = value),
                     ),

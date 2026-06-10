@@ -3,7 +3,7 @@ import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Services/api_service.dart';
 import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
 import 'package:stemma_app/Features/Login/login_page.dart';
-import 'package:stemma_app/Features/tutor/cadastrar_pet_page.dart';
+import 'package:stemma_app/Features/Tutor/cadastrar_pet_page.dart';
 
 class PerfilTutorPage extends StatelessWidget {
   const PerfilTutorPage({super.key});

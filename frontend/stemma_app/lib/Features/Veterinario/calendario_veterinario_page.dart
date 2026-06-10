@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:stemma_app/Core/Constants/app_colors.dart';
 import 'package:stemma_app/Core/Services/api_service.dart';
-import 'package:stemma_app/Core/Widgets/BarraInferiorPet.dart';
-import 'package:stemma_app/Core/Widgets/FormularioConsulta.dart';
+import 'package:stemma_app/Core/Widgets/BarraInferiorVet.dart';
 import 'package:stemma_app/Core/Widgets/calendario_widget.dart';
 import 'package:stemma_app/Core/Widgets/card_consulta.dart';
-import 'package:stemma_app/Features/Tutor/home_page.dart';
+import 'package:stemma_app/Features/Veterinario/home_veterinario_page.dart';
 
-class CalendarioPage extends StatefulWidget {
-  const CalendarioPage({super.key});
+class CalendarioVeterinarioPage extends StatefulWidget {
+  const CalendarioVeterinarioPage({super.key});
 
   @override
-  State<CalendarioPage> createState() => _CalendarioPageState();
+  State<CalendarioVeterinarioPage> createState() => _CalendarioVeterinarioPageState();
 }
 
-class _CalendarioPageState extends State<CalendarioPage> {
+class _CalendarioVeterinarioPageState extends State<CalendarioVeterinarioPage> {
   DateTime _mesFocado = DateTime.now();
   DateTime _diaSelecionado = DateTime.now();
 
@@ -22,6 +21,12 @@ class _CalendarioPageState extends State<CalendarioPage> {
   Map<String, String> _nomesPets = {};
   Map<String, String> _nomesVets = {};
   bool _carregando = true;
+  bool _criandoAgenda = false;
+
+  final List<String> _horarios = [
+    '08:00', '09:00', '10:00', '11:00', '12:00',
+    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
+  ];
 
   @override
   void initState() {
@@ -55,11 +60,49 @@ class _CalendarioPageState extends State<CalendarioPage> {
       setState(() => _carregando = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao buscar dados: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('Erro ao carregar agenda: $e'), backgroundColor: Colors.red),
         );
       }
     }
   }
+
+  Future<void> _criarDisponibilidade() async {
+    final vetId = ApiService.usuarioLogadoId;
+    if (vetId == null || vetId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Faça login como veterinário para criar disponibilidade.')),
+      );
+      return;
+    }
+
+    setState(() => _criandoAgenda = true);
+    try {
+      await ApiService.criarAgendaDisponibilidade(
+        veterinarioId: vetId,
+        data: _diaSelecionado,
+        horaInicio: '08:00:00',
+        horaFim: '18:00:00',
+        duracaoMinutos: 60,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Disponibilidade criada para o dia.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao criar disponibilidade: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _criandoAgenda = false);
+    }
+  }
+
 
 
   List<dynamic> _consultasDoDia(DateTime dia) {
@@ -88,20 +131,6 @@ class _CalendarioPageState extends State<CalendarioPage> {
     setState(() {
       _mesFocado = DateTime(_mesFocado.year, _mesFocado.month + delta, 1);
       _diaSelecionado = DateTime(_mesFocado.year, _mesFocado.month, 1);
-    });
-  }
-
-  void _abrirFormulario() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) => FormularioConsulta(dataSelecionada: _diaSelecionado),
-    ).then((sucesso) {
-      if (sucesso == true) _buscarDados(); // recarrega depois de criar consulta
     });
   }
 
@@ -144,7 +173,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
           icon: const Icon(Icons.home, color: AppColors.primaryGreen),
           onPressed: () => Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const HomePage()),
+            MaterialPageRoute(builder: (_) => const HomeVeterinarioPage()),
           ),
         ),
         title: Image.asset('assets/Loggo.png', width: 150, height: 45, fit: BoxFit.contain),
@@ -164,7 +193,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ----- calendário compartilhado -----
+
               CalendarioWidget(
                 mesFocado: _mesFocado,
                 diaSelecionado: _diaSelecionado,
@@ -175,48 +204,96 @@ class _CalendarioPageState extends State<CalendarioPage> {
 
               const SizedBox(height: 24),
 
-              Row(
-                children: [
-                  const Text(
-                    'Agendamentos',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: _criandoAgenda ? null : _criarDisponibilidade,
+                  icon: _criandoAgenda
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.event_available),
+                  label: const Text('Criar disponibilidade do dia'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primaryGreen,
                   ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: _abrirFormulario,
-                    icon: const Icon(Icons.add_circle, color: AppColors.primaryGreen, size: 32),
-                  ),
-                ],
+                ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
+
+              const Text(
+                'Agenda do dia',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 12),
 
               if (_carregando)
                 const Center(child: CircularProgressIndicator())
-              else if (consultasDoDia.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 32),
-                  child: Center(
-                    child: Text(
-                      'Nenhum agendamento neste dia.',
-                      style: TextStyle(color: AppColors.textGrey),
-                    ),
-                  ),
-                )
               else
-                ...consultasDoDia.map(
-                  (consulta) => CardConsulta(
-                    nomePet: _nomePet(consulta['petId']),
-                    nomeVet: _nomeVet(consulta['veterinarianId'] ?? consulta['veterinarioId']),
-                    dataFormatada: _formatarData(consulta['dateTime'] ?? consulta['dataConsulta']),
-                    status: (consulta['status'] ?? 'Agendada').toString(),
-                  ),
-                ),
+                ..._horarios.map((hora) => _linhaHorario(hora, consultasDoDia)),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const BarraInferiorPet(abaAtiva: 1),
+      bottomNavigationBar: const BarraInferiorVet(abaAtiva: 1),
+    );
+  }
+
+  Widget _linhaHorario(String hora, List<dynamic> consultasDia) {
+    final horaInt = int.parse(hora.split(':')[0]);
+
+    dynamic consulta;
+    for (final c in consultasDia) {
+      final raw = c['dateTime'] ?? c['dataConsulta'];
+      if (raw == null) continue;
+      final dt = DateTime.parse(raw.toString()).toLocal();
+      if (dt.hour == horaInt) {
+        consulta = c;
+        break;
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          SizedBox(
+            width: 55,
+            child: Text(
+              hora,
+              style: const TextStyle(
+                color: AppColors.textGrey,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+          ),
+
+          Expanded(
+            child: consulta != null
+                ? CardConsulta(
+                    nomePet: _nomePet(consulta['petId']),
+                    nomeVet: _nomeVet(consulta['veterinarianId'] ?? consulta['veterinarioId']),
+                    dataFormatada: _formatarData(consulta['dateTime'] ?? consulta['dataConsulta']),
+                    status: (consulta['status'] ?? 'Agendada').toString(),
+                  )
+                : Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.black12),
+                      ),
+                    ),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
