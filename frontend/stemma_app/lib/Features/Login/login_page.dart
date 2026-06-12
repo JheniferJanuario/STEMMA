@@ -51,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       final tipo = (usuario['tipoUsuario'] ?? '').toString().toLowerCase();
+
       final pagina = tipo.contains('veterinario')
           ? const HomeVeterinarioPage()
           : const HomePage();
@@ -70,7 +71,9 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } finally {
-      if (mounted) setState(() => _carregando = false);
+      if (mounted) {
+        setState(() => _carregando = false);
+      }
     }
   }
 
@@ -81,16 +84,19 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       body: SafeArea(
-        child: Column(
-          children: [
-            const LoginHeader(),
-            const SizedBox(height: 130),
-            Expanded(
-              child: Padding(
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Column(
+            children: [
+              const LoginHeader(),
+
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 80),
+
                     const Text(
                       'Acessar',
                       style: TextStyle(
@@ -99,13 +105,17 @@ class _LoginPageState extends State<LoginPage> {
                         color: AppColors.textGrey,
                       ),
                     ),
+
                     const SizedBox(height: 6),
+
                     Container(
                       width: 60,
                       height: 2,
                       color: AppColors.primaryGreen,
                     ),
+
                     const SizedBox(height: 28),
+
                     LabeledTextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -113,7 +123,9 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: 'Insira seu email',
                       prefixIcon: Icons.mail_outline,
                     ),
+
                     const SizedBox(height: 24),
+
                     LabeledTextField(
                       controller: _senhaController,
                       label: 'Senha',
@@ -121,9 +133,11 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: Icons.lock_outline,
                       obscureText: obscurePassword,
                       suffixIcon: IconButton(
-                        onPressed: () => setState(() {
-                          obscurePassword = !obscurePassword;
-                        }),
+                        onPressed: () {
+                          setState(() {
+                            obscurePassword = !obscurePassword;
+                          });
+                        },
                         icon: Icon(
                           obscurePassword
                               ? Icons.visibility_off_outlined
@@ -131,21 +145,28 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 22),
+
                     Center(
                       child: GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => isVeterinario
-                                ? const RegisterVeterinarioPage()
-                                : const RegisterTutorPage(),
-                          ),
-                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => isVeterinario
+                                  ? const RegisterVeterinarioPage()
+                                  : const RegisterTutorPage(),
+                            ),
+                          );
+                        },
                         child: RichText(
                           text: const TextSpan(
                             text: 'Não possui conta? ',
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
                             children: [
                               TextSpan(
                                 text: 'Cadastre-se.',
@@ -159,20 +180,33 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 24),
+
                     const Center(
                       child: Text(
                         'Por favor, nos diga como você deseja se conectar.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11, color: AppColors.textGrey),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textGrey,
+                        ),
                       ),
                     ),
+
                     const SizedBox(height: 12),
+
                     TipoDeUsuario(
                       isVeterinario: isVeterinario,
-                      onChanged: (value) => setState(() => isVeterinario = value),
+                      onChanged: (value) {
+                        setState(() {
+                          isVeterinario = value;
+                        });
+                      },
                     ),
-                    const SizedBox(height: 64),
+
+                    const SizedBox(height: 40),
+
                     Center(
                       child: SizedBox(
                         width: isDesktop ? 320 : double.infinity,
@@ -182,12 +216,13 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 24),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

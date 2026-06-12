@@ -3,10 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Flutter Web/Windows: localhost funciona.
-  // Android Emulator: troque para http://10.0.2.2:5215
-  // Celular físico: troque para http://IP_DO_NOTEBOOK:5215
-  static const String baseUrl = 'http://localhost:5215';
+  static const String baseUrl = 'https://bonding-agreed-said.ngrok-free.dev';
 
   static Map<String, dynamic>? usuarioLogado;
 

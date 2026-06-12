@@ -9,28 +9,31 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width > 800;
+    final size = MediaQuery.of(context).size;
+    final screenHeight = size.height;
+    final screenWidth = size.width;
+
+    final isDesktop = screenWidth > 800;
+
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
-
       body: SafeArea(
         child: Column(
           children: [
             SizedBox(
-              height: 220,
+              height: screenHeight * 0.25,
               child: Stack(
                 children: [
                   Container(
                     width: double.infinity,
                     color: AppColors.primaryGreen,
                   ),
-
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: ClipPath(
                       clipper: WaveClipper(),
                       child: Container(
-                        height: 120,
+                        height: screenHeight * 0.12, 
                         width: double.infinity,
                         color: AppColors.lightBackground,
                       ),
@@ -40,42 +43,56 @@ class WelcomePage extends StatelessWidget {
               ),
             ),
 
-            Image.asset('assets/logo_stemma_brasao.png', height: 90),
+            Image.asset(
+              'assets/logo_stemma_brasao.png', 
+              height: screenHeight * 0.10,
+            ),
 
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: screenHeight * 0.02),
+
+            Text(
               'Bem-vindo ao\nSTEMMA!',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 36,
+                fontSize: screenWidth < 360 ? 28 : 36,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textGrey,
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: screenHeight * 0.02),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
                 'Gerencie consultas, acompanhe prontuários e organize atendimentos veterinários de forma prática.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, color: AppColors.textGrey),
+                style: TextStyle(
+                  fontSize: screenWidth < 360 ? 14 : 16, 
+                  color: AppColors.textGrey
+                ),
               ),
             ),
 
-            const SizedBox(height: 25),
+            SizedBox(height: screenHeight * 0.02),
 
-            Image.asset('assets/image_splash_animais.png', height: 260),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Image.asset(
+                  'assets/image_splash_animais.png',
+                  fit: BoxFit.contain, 
+                ),
+              ),
+            ),
 
-            const Spacer(),
+            SizedBox(height: screenHeight * 0.02),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Center(
                 child: SizedBox(
                   width: isDesktop ? 320 : double.infinity,
-
                   child: PrimaryButton(
                     text: 'Começar',
                     onPressed: () {
@@ -88,7 +105,8 @@ class WelcomePage extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            
+            SizedBox(height: screenHeight * 0.03),
           ],
         ),
       ),
